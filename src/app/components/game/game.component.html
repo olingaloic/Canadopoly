@@ -1,0 +1,21 @@
+
+<div class="container">
+    <div class="row">
+      <div class="col-sm-8">
+        <board></board>
+      </div>
+      <div class="col-sm-2">
+        <p>Player position : {{player.position}}</p>
+        <p>Player balance : {{player.balance}}</p>
+        <p>Player properties :</p>
+        <ul>
+            <li *ngFor="let p of player.properties">
+              {{ p.name }}
+              </li>
+          </ul>          
+        <button (click)="rollDice()">Roll dice !</button>
+        <button (click)="buyProperty()">Buy !</button>
+      </div>
+    </div>
+  </div>
+  

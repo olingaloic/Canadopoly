@@ -1,0 +1,101 @@
+.noSquareHere {
+    background-color: #8FBC72;
+}
+
+td:not(.noSquareHere){
+    background-color: white(71, 255, 47);
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    border: 1.5px solid black;
+    position: relative;
+}
+
+#pawn {
+    width: 15px;
+    height: 15px;
+    padding: 5px;
+    background: red;
+    border: 1px solid white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tier1 {
+    height: 80px;
+    width: 15px;
+    margin-right: 60px;
+    border: 1px solid black;
+    background-color: violet;   
+  }
+
+  .tier2 {
+    height: 80px;
+    width: 15px;
+    margin-right: 60px;
+    border: 1px solid black;
+    background-color: cornflowerblue;   
+  }
+
+.tier3 {
+    height: 15px;
+    width: 100%;
+    margin-top: 30px;
+    border: 1px solid black;
+    background-color: blue;   
+  }
+
+.tier4 {
+    height: 15px;
+    width: 100%;
+    margin-top: 30px;
+    border: 1px solid black;
+    background-color: green;   
+  }
+
+.tier5-montreal {
+    height: 15px;
+    width: 100%;
+    margin-top: 30px;
+    border: 1px solid black;
+    background-color: palevioletred;   
+  }
+  .tier5-quebec {
+    height: 80px;
+    width: 15px;
+    margin-left: 60px;
+    border: 1px solid black;
+    background-color: palevioletred;   
+  }
+
+.tier6 {
+    height: 80px;
+    width: 15px;
+    margin-left: 60px;
+    border: 1px solid black;
+    background-color: yellow;   
+  }
+
+.tier7 {
+    height: 15px;
+    width: 100%;
+    margin-bottom: 30px;
+    border: 1px solid black;
+    background-color: orange;   
+  }
+
+.tier8 {
+    height: 15px;
+    width: 100%;
+    margin-bottom: 30px;
+    border: 1px solid black;
+    background-color: red;   
+  }
+
+  p { 
+      margin: 0px;
+      padding: 0px;
+  }
