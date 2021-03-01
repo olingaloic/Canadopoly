@@ -13,6 +13,7 @@ export abstract class Square {
 export abstract class Property extends Square{
     propertyPrice: number;
     mortgagePrice: number;
+    isMortgaged: boolean;
     player: Player;
 
     constructor(id, name, propertyPrice){

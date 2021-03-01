@@ -5,7 +5,6 @@ export class City extends Property {
     housePrice: number;
     nbHouses: number;
     rentPrice: number;
-    isMortgaged: boolean;
 
     constructor(id, name, tier, propertyPrice, housePrice, rentPrice){
         super(id, name, propertyPrice);

@@ -125,4 +125,9 @@ export class GameComponent implements OnInit {
     }
   }
 
+  mortgageProperty(property: Property){
+    property.isMortgaged = true;
+    //render mortgage ?
+  }
+
 }
