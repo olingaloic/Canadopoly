@@ -62,22 +62,62 @@ export class GameComponent implements OnInit {
 
   }
 
-  buyProperty(){
+  buyProperty(player: Player){
     //console.log("Buy!");
     console.log(this.properties.get(this.player.position).player)
     if (this.properties.get(this.player.position).player == undefined){
-      this.player.properties.push(this.properties.get(this.player.position));
-      this.properties.get(this.player.position).player = this.player;
+      let property = this.properties.get(this.player.position);
+      this.player.properties.push(property);
+      property.player = this.player;
       this.player.balance -= this.properties.get(this.player.position).propertyPrice;
       this.boardComponent.renderBuyProperty(this.player.position);
+      if (property.desc == "C"){
+        let chosenCity = property as City;
+        let citiesOfTheSameTier: Array<City>; 
+        this.properties.forEach((property: Property, id: number) => {
+          let city = property as City;
+          if(city.tier == chosenCity.tier)
+            citiesOfTheSameTier.push(chosenCity);
+        });
+        this.setCitiesBuyable(citiesOfTheSameTier);
+      }
+      
     } else {
       alert("THIS PROPERTY IS ALREADY TAKEN");
     }
     
   }
+  setCitiesBuyable(citiesOfTheSameTier: Array<City>){
+    let areCitiesBuyable: boolean;
+    let player = citiesOfTheSameTier[0].player as Player;
+    areCitiesBuyable = true;
+    citiesOfTheSameTier.forEach((city: City) => {
+      if(player != city.player)
+        areCitiesBuyable = false;
+    });
+    if(areCitiesBuyable){
+      citiesOfTheSameTier.forEach((city: City) => {
+        city.isHouseBuyable = true;
+      });
+    }
+  }
+  canPlayerBuyHouseCity(chosenCity: City, player: Player){
+    var isBuyable = true; 
+    this.properties.forEach((property: Property, id: number) => {
+      //console.log(key, value);
+      let city = property as City;
+      if(city.tier == chosenCity.tier && city.player != player)
+        return false;
+    });
+    return true;
+  }
 
-  buyHouse(){
+  buyHouse(city: City, player: Player){
     //console.log("Buy!");
+    city.nbHouses++;
+    city.rentPrice += city.housePrice;
+    this.boardComponent.renderBuyHouse(city);
+
   }
 
   generateRandomNumber(){

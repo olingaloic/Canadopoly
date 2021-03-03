@@ -1,6 +1,7 @@
 import { AfterViewInit, ViewChild, Renderer2, NgModule, Input} from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { City } from 'src/app/model/city';
 
 @Component({
   selector: 'board',
@@ -10,6 +11,7 @@ import { Component, OnInit } from '@angular/core';
 
 
 export class BoardComponent implements OnInit, AfterViewInit {
+  
   squares: Array<ElementRef>;
   
   @ViewChild('pawn') 
@@ -135,6 +137,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
   renderBuyProperty(propertyId){
     var square = this.squares[propertyId].nativeElement;
     square.style.backgroundColor = '#ff6666';
+  }
+
+  renderBuyHouse(city: City) {
+    //throw new Error('Method not implemented.');
   }
 }
 
