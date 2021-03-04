@@ -47,19 +47,6 @@ export class GameComponent implements OnInit {
     this.properties.set(26, new City(26, "Victoria", "Tier 1", 9000, 7000, 1000));
     this.properties.set(27, new City(27, "Vancouver", "Tier 1", 10000, 7000, 1000));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
   buyProperty(player: Player){
@@ -85,6 +72,20 @@ export class GameComponent implements OnInit {
     } else {
       alert("THIS PROPERTY IS ALREADY TAKEN");
     }
+    
+  }
+  humanPlayerBuyProperty(){
+    this.buyProperty(this.player);
+  }
+
+  renderBuyPropertyButton(){
+    if(this.properties.get(this.player.position) == undefined)
+      return false;
+    if(this.properties.get(this.player.position).player != undefined)
+      return false;
+    if(this.properties.get(this.player.position).propertyPrice > this.player.balance)
+      return false;
+    return true;
     
   }
   setCitiesBuyable(citiesOfTheSameTier: Array<City>){
@@ -113,7 +114,6 @@ export class GameComponent implements OnInit {
   }
 
   buyHouse(city: City, player: Player){
-    //console.log("Buy!");
     city.nbHouses++;
     city.rentPrice += city.housePrice;
     this.boardComponent.renderBuyHouse(city);

@@ -14,7 +14,7 @@
               </li>
           </ul>          
         <button (click)="rollDice()">Roll dice !</button>
-        <button (click)="buyProperty()">Buy !</button>
+        <button *ngIf="renderBuyPropertyButton()" (click)="humanPlayerBuyProperty()">Buy !</button>
       </div>
     </div>
   </div>
