@@ -8,13 +8,29 @@
         <p>Player position : {{player.position}}</p>
         <p>Player balance : {{player.balance}}</p>
         <p>Player properties :</p>
-        <ul>
-            <li *ngFor="let p of player.properties">
-              {{ p.name }}
-              </li>
-          </ul>          
+      
+          <div>
+            <table>
+              <thead>
+                <th>Property</th>
+                <th>Houses</th>
+                <th>Houses</th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let property of player.properties">
+                  <td>{{property.name}}</td>
+                  <td>{{property.nbHouses}}</td>
+                  <td>{{property.isHouseBuyable}}</td>
+                  <td><button *ngIf=(property.isHouseBuyable) (click)="humanPlayerBuyHouse(property)">Buy house !</button></td>
+                </tr>
+              </tbody>
+              
+            </table>
+          </div>          
         <button (click)="rollDice()">Roll dice !</button>
-        <button *ngIf="renderBuyPropertyButton()" (click)="humanPlayerBuyProperty()">Buy !</button>
+        <button *ngIf="displayBuyPropertyButton()" (click)="humanPlayerBuyProperty()">Buy property !</button>
+
       </div>
     </div>
   </div>

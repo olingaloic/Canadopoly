@@ -13,6 +13,7 @@ export class City extends Property {
         this.propertyPrice = propertyPrice;
         this.housePrice = housePrice;
         this.rentPrice = rentPrice;
+        this.nbHouses = 0;
         this.desc = "C";
     }
 }

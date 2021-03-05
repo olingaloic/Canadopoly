@@ -50,7 +50,6 @@ export class GameComponent implements OnInit {
   }
 
   buyProperty(player: Player){
-    //console.log("Buy!");
     console.log(this.properties.get(this.player.position).player)
     if (this.properties.get(this.player.position).player == undefined){
       let property = this.properties.get(this.player.position);
@@ -60,13 +59,13 @@ export class GameComponent implements OnInit {
       this.boardComponent.renderBuyProperty(this.player.position);
       if (property.desc == "C"){
         let chosenCity = property as City;
-        let citiesOfTheSameTier: Array<City>; 
+        let citiesOfTheSameTier: Array<City> = new Array<City>();
         this.properties.forEach((property: Property, id: number) => {
           let city = property as City;
           if(city.tier == chosenCity.tier)
-            citiesOfTheSameTier.push(chosenCity);
+            citiesOfTheSameTier.push(city);
         });
-        this.setCitiesBuyable(citiesOfTheSameTier);
+        this.setHousesBuyable(citiesOfTheSameTier, player);
       }
       
     } else {
@@ -78,7 +77,7 @@ export class GameComponent implements OnInit {
     this.buyProperty(this.player);
   }
 
-  renderBuyPropertyButton(){
+  displayBuyPropertyButton(){
     if(this.properties.get(this.player.position) == undefined)
       return false;
     if(this.properties.get(this.player.position).player != undefined)
@@ -88,35 +87,48 @@ export class GameComponent implements OnInit {
     return true;
     
   }
-  setCitiesBuyable(citiesOfTheSameTier: Array<City>){
-    let areCitiesBuyable: boolean;
-    let player = citiesOfTheSameTier[0].player as Player;
-    areCitiesBuyable = true;
+  
+
+  setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
+    var areHousesBelongToPlayer: boolean = true;
     citiesOfTheSameTier.forEach((city: City) => {
-      if(player != city.player)
-        areCitiesBuyable = false;
+      if(city.player != player)
+      areHousesBelongToPlayer = false;
     });
-    if(areCitiesBuyable){
-      citiesOfTheSameTier.forEach((city: City) => {
-        city.isHouseBuyable = true;
-      });
-    }
+    
+    citiesOfTheSameTier.forEach((city: City) => {
+      if(player.balance < city.housePrice || city.nbHouses == 5){
+        city.isHouseBuyable = false;
+      }
+      else {
+        city.isHouseBuyable = areHousesBelongToPlayer;
+      }
+    });
+    
   }
+  
   canPlayerBuyHouseCity(chosenCity: City, player: Player){
-    var isBuyable = true; 
+    if(chosenCity.player != player || chosenCity.housePrice > player.balance || chosenCity.nbHouses == 5)
+      return false;
     this.properties.forEach((property: Property, id: number) => {
-      //console.log(key, value);
       let city = property as City;
       if(city.tier == chosenCity.tier && city.player != player)
         return false;
     });
     return true;
   }
+  humanPlayerBuyHouse(property: Property){
+    let city = property as City;
+    this.buyHouse(city, this.player);
+  }
 
   buyHouse(city: City, player: Player){
     city.nbHouses++;
     city.rentPrice += city.housePrice;
-    this.boardComponent.renderBuyHouse(city);
+    player.balance -= city.housePrice;
+    let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
+    this.setHousesBuyable(citiesOfTheSameTier, player);
+    //this.boardComponent.renderBuyHouse(city);
 
   }
 
@@ -168,6 +180,16 @@ export class GameComponent implements OnInit {
   mortgageProperty(property: Property){
     property.isMortgaged = true;
     //render mortgage ?
+  }
+
+  getCitiesOfTheSameTier(chosenCity: City){
+    let citiesOfTheSameTier: Array<City> = new Array<City>();
+      this.properties.forEach((property: Property, id: number) => {
+          let city = property as City;
+          if(city.tier == chosenCity.tier)
+            citiesOfTheSameTier.push(city);
+      });
+      return citiesOfTheSameTier;
   }
 
 }
