@@ -12,14 +12,17 @@ export abstract class Square {
 
 export abstract class Property extends Square{
     propertyPrice: number;
-    mortgagePrice: number;
+    mortgageValue: number;
     isMortgaged: boolean;
+    isMortgageable: boolean;
+    rentPrices: Array<number>;
     player: Player;
 
-    constructor(id, name, propertyPrice){
+    constructor(id, name, propertyPrice, rentPrices){
         super(id, name);
         this.propertyPrice = propertyPrice;
-        this.mortgagePrice = propertyPrice/2;
+        this.rentPrices = rentPrices;
+        this.mortgageValue = propertyPrice/2;
 
     }
 }
