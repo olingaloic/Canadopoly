@@ -7,11 +7,13 @@ export class Player {
     isInJail: boolean;
     properties: Array<Property>;
     position: number;
+    nbAirports: number;
     colour: string;
     constructor(name) {
         this.name = name;
         this.balance = 50000;
         this.position = 0;
+        this.nbAirports = 0;
         this.properties = new Array<Property>();
     }
 }

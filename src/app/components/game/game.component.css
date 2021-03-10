@@ -1,0 +1,11 @@
+table {
+    width: 415px;
+}
+.table-container {
+    height: 300px;
+    overflow: auto;
+}
+
+.success {
+    color: green;
+}

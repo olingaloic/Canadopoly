@@ -25,4 +25,8 @@ export abstract class Property extends Square{
         this.mortgageValue = propertyPrice/2;
 
     }
+
+    isCity(){
+        return this.desc == "C";
+    }
 }

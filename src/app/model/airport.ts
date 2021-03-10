@@ -7,5 +7,6 @@ export class Airport extends Property{
         this.name = name;
         this.propertyPrice = propertyPrice;
         this.desc = "A";
+        
     }
 }
