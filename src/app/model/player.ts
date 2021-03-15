@@ -1,3 +1,4 @@
+import { City } from "./city";
 import { Property } from "./square";
 
 export class Player {
@@ -15,5 +16,17 @@ export class Player {
         this.position = 0;
         this.nbAirports = 0;
         this.properties = new Array<Property>();
+    }
+
+    getNumberOfHouses(){
+        var nbHouses: number = 0;
+        this.properties.forEach((property: Property) => {
+            if(property.isCity()){
+                let city = property as City;
+                nbHouses += city.nbHouses;
+            }
+
+        });
+        return nbHouses;
     }
 }

@@ -189,15 +189,14 @@ export class GameComponent implements OnInit {
     
   }
 
-  generateRandomNumber(){
-    var randomNumber;
-    randomNumber = Math.floor(Math.random()*6)+1;
+  generateRandomNumber(minNumber: number, maxNumber: number){
+    var randomNumber = Math.floor(Math.random()*maxNumber) + minNumber;
     console.log("random number" + randomNumber);
     return randomNumber;
   }
 
   rollDice(){
-    var randomNumber = this.generateRandomNumber();
+    var randomNumber = this.generateRandomNumber(1, 6);
     
     for (let i = 0; i < 1; i++){
       setTimeout(()=>{
@@ -227,13 +226,58 @@ export class GameComponent implements OnInit {
       this.player.position ++;
       this.boardComponent.renderMovePawn(this.player.position);
       if(this.player.position == 12 || this.player.position == 20)
-        this.openChanceDialog();
+        this.generateRandomChanceEvent();
     }
     else {
       this.player.position = 0;
       this.boardComponent.renderMovePawn(this.player.position);
       this.player.balance += 5000;
     }
+  }
+  generateRandomChanceEvent() {
+    var chanceEventNumber = this.generateRandomNumber(1, 4);
+    chanceEventNumber = 4;
+    var chanceEventMessage;
+    switch(chanceEventNumber) {
+      case 1:
+        chanceEventMessage = "Go to the next airport.";
+        this.movePlayerToNextAirport(this.player);
+        break;
+      case 2:
+        chanceEventMessage = "You spent $2000 during holidays.";
+        this.player.balance -= 2000;
+        break;
+      case 3:
+        chanceEventMessage = "You won $2500 at the lottery.";
+        this.player.balance += 3000;
+        break;
+      case 4:
+        this.playerPayHousesRepairments(this.player);
+        chanceEventMessage = "House repairments ! Pay $500 per house";
+        break;
+      default :
+        break;
+    }
+    this.openChanceDialog(chanceEventMessage);
+
+  }
+  playerPayHousesRepairments(player: Player) {
+    var numberPlayerHouses: number = player.getNumberOfHouses();
+    this.player.balance -= (numberPlayerHouses * 500);
+  }
+  movePlayerToNextAirport(player: Player) {
+    switch(player.position){
+      case 12:
+        player.position = 18;
+        this.boardComponent.renderMovePawn(18);
+        break;
+      case 20:
+        player.position = 25;
+        this.boardComponent.renderMovePawn(25);
+        break;
+    }
+    
+    
   }
 
   mortgageProperty(property: Property){
@@ -266,11 +310,11 @@ export class GameComponent implements OnInit {
     this.dataSource.data = this.player.properties;
   }
 
-  openChanceDialog(): void {
+  openChanceDialog(chanceEventMessage: string): void {
     const dialogRef = this.dialog.open(ChanceDialogComponent, {
       width: '150px',
       height: '210px',
-      data: {id: this.player.name, player: this.player }
+      data: {player: this.player, chanceCardText : chanceEventMessage}
     });
 
     dialogRef.afterClosed().subscribe(result => {

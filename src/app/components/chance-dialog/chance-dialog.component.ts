@@ -4,8 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Player } from 'src/app/model/player';
 
 export interface ChanceDialogData {
-  chanceId: number;
   player: Player;
+  chanceCardText: string
 }
 @Component({
   selector: 'app-chance-dialog',
