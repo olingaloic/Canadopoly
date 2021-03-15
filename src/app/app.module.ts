@@ -7,7 +7,9 @@ import { BoardComponent } from './components/board/board.component';
 import { GameComponent } from './components/game/game.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
-import {MatTable, MatTableModule} from '@angular/material/table';
+import {MatTableModule} from '@angular/material/table';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { ChanceDialogComponent } from './components/chance-dialog/chance-dialog.component';
 
 
 
@@ -15,14 +17,16 @@ import {MatTable, MatTableModule} from '@angular/material/table';
   declarations: [
     AppComponent,
     GameComponent,
-    BoardComponent
+    BoardComponent,
+    ChanceDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    MatTableModule
+    MatTableModule,
+    MatDialogModule
     
   ],
   exports: [

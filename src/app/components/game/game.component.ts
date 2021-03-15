@@ -5,6 +5,8 @@ import { City } from 'src/app/model/city';
 import { Property } from 'src/app/model/square';
 import { BoardComponent } from '../board/board.component';
 import { MatTableDataSource } from '@angular/material/table';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { ChanceDialogComponent } from '../chance-dialog/chance-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -13,6 +15,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 
 export class GameComponent implements OnInit {
+  constructor(public dialog: MatDialog) {}
 
   @ViewChild(BoardComponent)
   private boardComponent: BoardComponent;
@@ -223,6 +226,8 @@ export class GameComponent implements OnInit {
     if(this.player.position != 27){
       this.player.position ++;
       this.boardComponent.renderMovePawn(this.player.position);
+      if(this.player.position == 12 || this.player.position == 20)
+        this.openChanceDialog();
     }
     else {
       this.player.position = 0;
@@ -259,6 +264,19 @@ export class GameComponent implements OnInit {
 
   updatePropertiesTableRendering(){
     this.dataSource.data = this.player.properties;
+  }
+
+  openChanceDialog(): void {
+    const dialogRef = this.dialog.open(ChanceDialogComponent, {
+      width: '150px',
+      height: '210px',
+      data: {id: this.player.name, player: this.player }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      //this.animal = result;
+    });
   }
 
 }

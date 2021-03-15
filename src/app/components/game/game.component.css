@@ -1,8 +1,18 @@
 table {
-    width: 415px;
+    width: 450px;
+}
+
+.board{ 
+    position: fixed; 
+    left: 5px;
+}
+
+.right-side {
+    position: fixed; 
+    right: 60px;
 }
 .table-container {
-    height: 300px;
+    max-height: 250px;
     overflow: auto;
 }
 

@@ -3,7 +3,6 @@ import { Player } from "./player";
 export abstract class Square {
     id: number;
     name: string;
-    desc: string;
     constructor(id, name){
         this.id = id;
         this.name = name;
@@ -17,6 +16,7 @@ export abstract class Property extends Square{
     isMortgageable: boolean;
     rentPrices: Array<number>;
     player: Player;
+    desc: string;
 
     constructor(id, name, propertyPrice, rentPrices){
         super(id, name);

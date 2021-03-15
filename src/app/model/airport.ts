@@ -6,6 +6,7 @@ export class Airport extends Property{
         super(id, name, propertyPrice, rentPrices);
         this.name = name;
         this.propertyPrice = propertyPrice;
+        this.isMortgageable = true;
         this.desc = "A";
         
     }
