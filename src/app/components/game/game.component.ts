@@ -21,7 +21,7 @@ export class GameComponent implements OnInit {
   private boardComponent: BoardComponent;
 
   player: Player;
-  property1: City;
+  diceValue: number;
   properties: Map<number, Property>;
   dataSource = new MatTableDataSource();
   displayedColumns =
@@ -196,37 +196,46 @@ export class GameComponent implements OnInit {
   }
 
   rollDice(){
-    var randomNumber = this.generateRandomNumber(1, 6);
+    this.diceValue = this.generateRandomNumber(1, 6);
     
-    for (let i = 0; i < 1; i++){
+    if(this.player.nbTurnsInJail > 0){
+      this.player.nbTurnsInJail = (this.diceValue == 6) ? 0 : this.player.nbTurnsInJail - 1;
+    }
+    else {
+      for (let i = 0; i < 1; i++){
+        setTimeout(()=>{
+          this.movePawn();
+        }, 400);
+      } 
       setTimeout(()=>{
-        this.movePawn();
+        if(this.player.position == 22){
+          this.movePawnToJail();
+          this.player.nbTurnsInJail = 3;
+          this.openChanceDialog("Go to Jail !");
+        }
+        if(this.player.position == 12 || this.player.position == 20)
+          this.generateRandomChanceEvent();
+        if(this.player.position == 2)
+          this.player.balance -= 5000;
       }, 400);
-    } 
-    setTimeout(()=>{
-      console.log("position " + this.player.position);
-      if(this.player.position == 22){
-        this.movePawnToJail();
-        this.player.isInJail = true;
-      }
-    }, 400);
+    }
+   
 
      
   }
 
   movePawnToJail(){
-    /*
     this.player.position = 8;
+    this.player.nbTurnsInJail = 3;
     this.boardComponent.renderMovePawn(this.player.position);
-    */
+    
   }
 
   movePawn(){
     if(this.player.position != 27){
       this.player.position ++;
       this.boardComponent.renderMovePawn(this.player.position);
-      if(this.player.position == 12 || this.player.position == 20)
-        this.generateRandomChanceEvent();
+      
     }
     else {
       this.player.position = 0;
@@ -235,8 +244,8 @@ export class GameComponent implements OnInit {
     }
   }
   generateRandomChanceEvent() {
-    var chanceEventNumber = this.generateRandomNumber(1, 4);
-    chanceEventNumber = 4;
+    var chanceEventNumber = this.generateRandomNumber(1, 5);
+    //chanceEventNumber = 4;
     var chanceEventMessage;
     switch(chanceEventNumber) {
       case 1:
@@ -254,6 +263,10 @@ export class GameComponent implements OnInit {
       case 4:
         this.playerPayHousesRepairments(this.player);
         chanceEventMessage = "House repairments ! Pay $500 per house";
+        break;
+      case 5:
+        this.movePawnToJail();
+        chanceEventMessage = "Go to Jail !";
         break;
       default :
         break;
@@ -319,8 +332,12 @@ export class GameComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      //this.animal = result;
     });
+  }
+
+  humanPlayerGetFree() {
+    this.player.nbTurnsInJail = 0;
+    this.player.balance -= 1000;
   }
 
 }

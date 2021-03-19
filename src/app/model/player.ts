@@ -5,7 +5,7 @@ export class Player {
     id: number;
     name: string;
     balance: number;
-    isInJail: boolean;
+    nbTurnsInJail: number;
     properties: Array<Property>;
     position: number;
     nbAirports: number;

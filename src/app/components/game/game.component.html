@@ -6,6 +6,8 @@
         <p style="text-align: center;">Your balance : ${{player.balance}}</p>
         <button mat-button color="primary" (click)="rollDice()" >Roll dice !</button>
         <button mat-button *ngIf="displayBuyPropertyButton()" (click)="humanPlayerBuyProperty()">Buy property !</button>
+        <button mat-button *ngIf="player.nbTurnsInJail > 0" (click)="humanPlayerGetFree()">Get free for $1000</button>
+
           <div class="table-container">
 
             <table mat-table [dataSource]="dataSource"  *ngIf="player.properties.length != 0; else noProperties">
@@ -70,6 +72,8 @@
             </table>
             <ng-template #noProperties>Ths</ng-template>
           </div> 
+          <p>Dice Value : {{diceValue}}</p>
+          <p>Nb turn in JAIL : {{player.nbTurnsInJail}}</p>
            
       </div>
       
