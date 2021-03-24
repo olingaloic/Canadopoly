@@ -2,6 +2,7 @@ import { AfterViewInit, ViewChild, Renderer2, NgModule, Input} from '@angular/co
 import { ElementRef } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { City } from 'src/app/model/city';
+import { Player } from 'src/app/model/player';
 
 @Component({
   selector: 'board',
@@ -14,8 +15,11 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
   squares: Array<ElementRef>;
   
-  @ViewChild('pawn') 
-  pawn: ElementRef;
+  @ViewChild('humanPawn') 
+  humanPawn: ElementRef;
+
+  @ViewChild('CPUPawn') 
+  CPUPawn: ElementRef;
 
   @ViewChild('square0')
   square0: ElementRef;
@@ -116,9 +120,17 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   }
  
-  renderMovePawn(position){
-    var pawn = this.pawn.nativeElement;
+  renderMovePawn(player: Player){
+    var pawn;
+    var position = player.position;
+    if(player.name == "Human Player"){
+      pawn = this.humanPawn.nativeElement;
+    } else {
+      pawn = this.CPUPawn.nativeElement;
+
+    }
     //pawn.remove();
+    console.log(player)
     if (position == 0)
       this.renderer.appendChild(this.squares[0].nativeElement, pawn);
     if (position >= 1 && position <= 8 || position >= 14 && position <= 21)
@@ -134,9 +146,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
   }
 
-  renderBuyProperty(propertyId){
-    var square = this.squares[propertyId].nativeElement;
-    square.style.backgroundColor = '#ff6666';
+  renderBuyProperty(player : Player){
+    var square = this.squares[player.position].nativeElement;
+    console.log(square.style);
+    square.style.backgroundColor = player.colour;
   }
 
   renderBuyHouse(city: City) {

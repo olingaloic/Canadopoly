@@ -10,8 +10,10 @@ export class Player {
     position: number;
     nbAirports: number;
     colour: string;
-    constructor(name) {
+    isPlayerTurn : boolean;
+    constructor(name, colour) {
         this.name = name;
+        this.colour = colour;
         this.balance = 50000;
         this.position = 0;
         this.nbAirports = 0;
@@ -28,5 +30,9 @@ export class Player {
 
         });
         return nbHouses;
+    }
+
+    canPlayerBuyProperty(property: Property){
+        return property.propertyPrice <= this.balance && property.player == undefined;
     }
 }

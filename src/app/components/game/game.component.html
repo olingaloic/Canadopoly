@@ -4,9 +4,10 @@
       <board class="board"></board>
       <div class="right-side">
         <p style="text-align: center;">Your balance : ${{player.balance}}</p>
-        <button mat-button color="primary" (click)="rollDice()" >Roll dice !</button>
-        <button mat-button *ngIf="displayBuyPropertyButton()" (click)="humanPlayerBuyProperty()">Buy property !</button>
-        <button mat-button *ngIf="player.nbTurnsInJail > 0" (click)="humanPlayerGetFree()">Get free for $1000</button>
+        <button mat-button *ngIf="player.isPlayerTurn" color="primary" (click)="rollDice(player)" >Roll dice !</button>
+        <button mat-button *ngIf="displayBuyPropertyButton() && player.isPlayerTurn" (click)="buyProperty(player)">Buy property !</button>
+        <button mat-button *ngIf="canHumanEndTurn" (click)="endTurn(player)">End turn</button>
+        <button mat-button *ngIf="player.nbTurnsInJail > 0 && player.isPlayerTurn" (click)="playerGetFree(player)">Get free for $1000</button>
 
           <div class="table-container">
 

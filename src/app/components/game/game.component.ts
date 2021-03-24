@@ -21,6 +21,8 @@ export class GameComponent implements OnInit {
   private boardComponent: BoardComponent;
 
   player: Player;
+  CPUPlayer: Player;
+  canHumanEndTurn: boolean;
   diceValue: number;
   properties: Map<number, Property>;
   dataSource = new MatTableDataSource();
@@ -31,7 +33,9 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.properties = new Map();
-    this.player = new Player("Test Player");
+    this.player = new Player("Human Player", "#ff6666");
+    this.player.isPlayerTurn = true;
+    this.CPUPlayer = new Player("CPU Player", "#6c5de8");
     this.properties.set(1, new City(1, "Charlottetown", "Tier 8", 1500, 500, [100, 400, 1000, 3500, 5000, 6000]));
     this.properties.set(3, new City(3, "St John's", "Tier 8", 1500, 500, [100, 500, 1200, 4000, 6000, 7000]));
     this.properties.set(4, new Airport(4, "Trudeau Airport", 5000, [0, 600, 1200, 2500, 5000]));
@@ -57,11 +61,11 @@ export class GameComponent implements OnInit {
   }
 
   buyProperty(player: Player){
-    let property = this.properties.get(this.player.position);
-    this.player.properties.push(property);
-    property.player = this.player;
-    this.player.balance -= this.properties.get(this.player.position).propertyPrice;
-    this.boardComponent.renderBuyProperty(this.player.position);
+    let property = this.properties.get(player.position);
+    player.properties.push(property);
+    property.player = player;
+    player.balance -= this.properties.get(player.position).propertyPrice;
+    this.boardComponent.renderBuyProperty(player);
     if (property.isCity()){
       let chosenCity = property as City;
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(chosenCity);
@@ -71,13 +75,6 @@ export class GameComponent implements OnInit {
       player.nbAirports++;
     }
     this.updatePropertiesTableRendering();
-
-
-  
-  }
-
-  humanPlayerBuyProperty(){
-    this.buyProperty(this.player);
   }
 
   displayBuyPropertyButton(){
@@ -195,98 +192,115 @@ export class GameComponent implements OnInit {
     return randomNumber;
   }
 
-  rollDice(){
+  rollDice(player: Player){
     this.diceValue = this.generateRandomNumber(1, 6);
     
-    if(this.player.nbTurnsInJail > 0){
-      this.player.nbTurnsInJail = (this.diceValue == 6) ? 0 : this.player.nbTurnsInJail - 1;
+    if(player.nbTurnsInJail > 0){
+      player.nbTurnsInJail = (this.diceValue == 6) ? 0 : player.nbTurnsInJail - 1;
     }
     else {
-      for (let i = 0; i < 1; i++){
-        setTimeout(()=>{
-          this.movePawn();
-        }, 400);
-      } 
+      for (let i = 0; i < this.diceValue; i++){
+        this.movePlayer(player);
+      }
       setTimeout(()=>{
-        if(this.player.position == 22){
-          this.movePawnToJail();
-          this.player.nbTurnsInJail = 3;
-          this.openChanceDialog("Go to Jail !");
+        if(player.position == 22){
+          this.movePlayerToJail(player);
+          player.nbTurnsInJail = 3;
+          this.openChanceDialog(player, "Go to Jail !");
         }
-        if(this.player.position == 12 || this.player.position == 20)
-          this.generateRandomChanceEvent();
-        if(this.player.position == 2)
-          this.player.balance -= 5000;
+        if(player.position == 12 || player.position == 20)
+          this.generateRandomChanceEvent(player);
+        if(player.position == 2)
+          player.balance -= 5000;
       }, 400);
     }
-   
-
-     
+    if(player.name == "Human Player")
+      this.canHumanEndTurn = true;
   }
 
-  movePawnToJail(){
-    this.player.position = 8;
-    this.player.nbTurnsInJail = 3;
-    this.boardComponent.renderMovePawn(this.player.position);
+  endTurn(player: Player){
+    player.isPlayerTurn = false;
+    if(player.name == "Human Player"){
+      this.canHumanEndTurn = false;
+      this.CPUPlayerPlay();
+    }
+  }
+  CPUPlayerPlay() {
+    //throw new Error('Method not implemented.');
+    var position;
+    var property;
+    this.rollDice(this.CPUPlayer);
+    position = this.CPUPlayer.position;
+    property = this.properties.get(position);
+    if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
+      this.buyProperty(this.CPUPlayer)
+    this.CPUPlayer.isPlayerTurn = false;  
+    this.player.isPlayerTurn = true;
+
+  }
+
+  movePlayerToJail(player: Player){
+    player.position = 8;
+    player.nbTurnsInJail = 3;
+    this.boardComponent.renderMovePawn(player);
     
   }
 
-  movePawn(){
-    if(this.player.position != 27){
-      this.player.position ++;
-      this.boardComponent.renderMovePawn(this.player.position);
-      
+  movePlayer(player: Player){
+    if(player.position != 27){
+      player.position ++;
+      this.boardComponent.renderMovePawn(player);
     }
     else {
-      this.player.position = 0;
-      this.boardComponent.renderMovePawn(this.player.position);
-      this.player.balance += 5000;
+      player.position = 0;
+      this.boardComponent.renderMovePawn(player);
+      player.balance += 5000;
     }
   }
-  generateRandomChanceEvent() {
+  generateRandomChanceEvent(player: Player) {
     var chanceEventNumber = this.generateRandomNumber(1, 5);
     //chanceEventNumber = 4;
     var chanceEventMessage;
     switch(chanceEventNumber) {
       case 1:
         chanceEventMessage = "Go to the next airport.";
-        this.movePlayerToNextAirport(this.player);
+        this.movePlayerToNextAirport(player);
         break;
       case 2:
         chanceEventMessage = "You spent $2000 during holidays.";
-        this.player.balance -= 2000;
+        player.balance -= 2000;
         break;
       case 3:
         chanceEventMessage = "You won $2500 at the lottery.";
-        this.player.balance += 3000;
+        player.balance += 3000;
         break;
       case 4:
-        this.playerPayHousesRepairments(this.player);
+        this.playerPayHousesRepairments(player);
         chanceEventMessage = "House repairments ! Pay $500 per house";
         break;
       case 5:
-        this.movePawnToJail();
+        this.movePlayerToJail(player);
         chanceEventMessage = "Go to Jail !";
         break;
       default :
         break;
     }
-    this.openChanceDialog(chanceEventMessage);
+    this.openChanceDialog(player, chanceEventMessage);
 
   }
   playerPayHousesRepairments(player: Player) {
     var numberPlayerHouses: number = player.getNumberOfHouses();
-    this.player.balance -= (numberPlayerHouses * 500);
+    player.balance -= (numberPlayerHouses * 500);
   }
   movePlayerToNextAirport(player: Player) {
     switch(player.position){
       case 12:
         player.position = 18;
-        this.boardComponent.renderMovePawn(18);
+        this.boardComponent.renderMovePawn(player);
         break;
       case 20:
         player.position = 25;
-        this.boardComponent.renderMovePawn(25);
+        this.boardComponent.renderMovePawn(player);
         break;
     }
     
@@ -323,11 +337,11 @@ export class GameComponent implements OnInit {
     this.dataSource.data = this.player.properties;
   }
 
-  openChanceDialog(chanceEventMessage: string): void {
+  openChanceDialog(player: Player, chanceEventMessage: string): void {
     const dialogRef = this.dialog.open(ChanceDialogComponent, {
       width: '150px',
       height: '210px',
-      data: {player: this.player, chanceCardText : chanceEventMessage}
+      data: {player: player, chanceCardText : chanceEventMessage}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -335,9 +349,9 @@ export class GameComponent implements OnInit {
     });
   }
 
-  humanPlayerGetFree() {
-    this.player.nbTurnsInJail = 0;
-    this.player.balance -= 1000;
+  playerGetFree(player) {
+    player.nbTurnsInJail = 0;
+    player.balance -= 1000;
   }
 
 }
