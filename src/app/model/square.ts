@@ -29,4 +29,6 @@ export abstract class Property extends Square{
     isCity(){
         return this.desc == "C";
     }
+    
+    abstract getCurrentRentPrice();
 }

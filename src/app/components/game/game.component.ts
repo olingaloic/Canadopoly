@@ -84,10 +84,13 @@ export class GameComponent implements OnInit {
       return false;
     if(this.properties.get(this.player.position).propertyPrice > this.player.balance)
       return false;
+    if(!this.player.isPlayerTurn)
+      return false;
     return true;
-    
   }
-  
+  displayRollDiceButton(){
+    return this.player.isPlayerTurn && !this.canHumanEndTurn;
+  }
 
   setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
     var areHousesBuyable: boolean = true;
@@ -193,6 +196,7 @@ export class GameComponent implements OnInit {
   }
 
   rollDice(player: Player){
+    var property : Property;
     this.diceValue = this.generateRandomNumber(1, 6);
     
     if(player.nbTurnsInJail > 0){
@@ -214,8 +218,18 @@ export class GameComponent implements OnInit {
           player.balance -= 5000;
       }, 400);
     }
+    property = this.properties.get(player.position);
+    if(property != undefined && player.mustPayRent(property)){
+      console.log(property.getCurrentRentPrice())
+      player.balance -= property.getCurrentRentPrice();
+
+    }
     if(player.name == "Human Player")
-      this.canHumanEndTurn = true;
+      this.canHumanEndTurn = true;    
+  }
+
+  displayGetFreeButton(){
+    return this.player.nbTurnsInJail > 0 && this.player.isPlayerTurn && this.displayRollDiceButton();
   }
 
   endTurn(player: Player){
@@ -229,9 +243,13 @@ export class GameComponent implements OnInit {
     //throw new Error('Method not implemented.');
     var position;
     var property;
-    this.rollDice(this.CPUPlayer);
-    position = this.CPUPlayer.position;
-    property = this.properties.get(position);
+    if(this.CPUPlayer.nbTurnsInJail > 3 && this.CPUPlayer.balance >= 1000){
+      this.playerGetFree(this.CPUPlayer);
+    } else {
+      this.rollDice(this.CPUPlayer);
+      position = this.CPUPlayer.position;
+      property = this.properties.get(position);
+    }
     if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
       this.buyProperty(this.CPUPlayer)
     this.CPUPlayer.isPlayerTurn = false;  
@@ -352,6 +370,7 @@ export class GameComponent implements OnInit {
   playerGetFree(player) {
     player.nbTurnsInJail = 0;
     player.balance -= 1000;
+    this.canHumanEndTurn = true;
   }
 
 }

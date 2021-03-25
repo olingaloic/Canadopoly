@@ -4,10 +4,10 @@
       <board class="board"></board>
       <div class="right-side">
         <p style="text-align: center;">Your balance : ${{player.balance}}</p>
-        <button mat-button *ngIf="player.isPlayerTurn" color="primary" (click)="rollDice(player)" >Roll dice !</button>
-        <button mat-button *ngIf="displayBuyPropertyButton() && player.isPlayerTurn" (click)="buyProperty(player)">Buy property !</button>
+        <button mat-button *ngIf="displayRollDiceButton()" color="primary" (click)="rollDice(player)" >Roll dice !</button>
+        <button mat-button *ngIf="displayBuyPropertyButton()" (click)="buyProperty(player)">Buy property !</button>
         <button mat-button *ngIf="canHumanEndTurn" (click)="endTurn(player)">End turn</button>
-        <button mat-button *ngIf="player.nbTurnsInJail > 0 && player.isPlayerTurn" (click)="playerGetFree(player)">Get free for $1000</button>
+        <button mat-button *ngIf="displayGetFreeButton();" (click)="playerGetFree(player)">Get free for $1000</button>
 
           <div class="table-container">
 
@@ -74,7 +74,10 @@
             <ng-template #noProperties>Ths</ng-template>
           </div> 
           <p>Dice Value : {{diceValue}}</p>
-          <p>Nb turn in JAIL : {{player.nbTurnsInJail}}</p>
+          <p *ngIf="player.nbTurnsInJail > 0">Turns in jail player : {{player.nbTurnsInJail}}</p>
+          <p >CPU Budget : $ {{CPUPlayer.balance}}</p>
+          <p *ngIf="CPUPlayer.nbTurnsInJail > 0">Turns in jail player : {{CPUPlayer.nbTurnsInJail}}</p>
+
            
       </div>
       

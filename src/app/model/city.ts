@@ -14,4 +14,7 @@ export class City extends Property {
         this.nbHouses = 0;
         this.desc = "C";
     }
+    getCurrentRentPrice(){
+        return this.rentPrices[this.nbHouses];
+    }
 }

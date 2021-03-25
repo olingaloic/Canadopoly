@@ -2,6 +2,7 @@ import { City } from "./city";
 import { Property } from "./square";
 
 export class Player {
+    
     id: number;
     name: string;
     balance: number;
@@ -34,5 +35,11 @@ export class Player {
 
     canPlayerBuyProperty(property: Property){
         return property.propertyPrice <= this.balance && property.player == undefined;
+    }
+
+    mustPayRent(property: Property) {
+        if(!property.isMortgaged && property.player != this && property.player != undefined)
+            return true;
+        return false;
     }
 }

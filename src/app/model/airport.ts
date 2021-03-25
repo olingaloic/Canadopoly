@@ -10,4 +10,9 @@ export class Airport extends Property{
         this.desc = "A";
         
     }
+
+    getCurrentRentPrice(){
+        var nbAirports = this.player.nbAirports;
+        return this.rentPrices[nbAirports];
+    }
 }
