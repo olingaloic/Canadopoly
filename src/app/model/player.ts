@@ -42,4 +42,8 @@ export class Player {
             return true;
         return false;
     }
+
+    getPropertiesSorted(){
+        return this.properties.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
+    }
 }

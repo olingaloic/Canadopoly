@@ -75,8 +75,10 @@
           </div> 
           <p>Dice Value : {{diceValue}}</p>
           <p *ngIf="player.nbTurnsInJail > 0">Turns in jail player : {{player.nbTurnsInJail}}</p>
-          <p >CPU Budget : $ {{CPUPlayer.balance}}</p>
+          <p >CPU balance : $ {{CPUPlayer.balance}}</p>
           <p *ngIf="CPUPlayer.nbTurnsInJail > 0">Turns in jail player : {{CPUPlayer.nbTurnsInJail}}</p>
+          <button mat-button color="primary" (click)="seeProperties(CPUPlayer)" >Properties</button>
+
 
            
       </div>

@@ -7,6 +7,7 @@ import { BoardComponent } from '../board/board.component';
 import { MatTableDataSource } from '@angular/material/table';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ChanceDialogComponent } from '../chance-dialog/chance-dialog.component';
+import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -191,7 +192,6 @@ export class GameComponent implements OnInit {
 
   generateRandomNumber(minNumber: number, maxNumber: number){
     var randomNumber = Math.floor(Math.random()*maxNumber) + minNumber;
-    console.log("random number" + randomNumber);
     return randomNumber;
   }
 
@@ -222,14 +222,14 @@ export class GameComponent implements OnInit {
     if(property != undefined && player.mustPayRent(property)){
       console.log(property.getCurrentRentPrice())
       player.balance -= property.getCurrentRentPrice();
-
+      property.player.balance += property.getCurrentRentPrice();
     }
     if(player.name == "Human Player")
       this.canHumanEndTurn = true;    
   }
 
   displayGetFreeButton(){
-    return this.player.nbTurnsInJail > 0 && this.player.isPlayerTurn && this.displayRollDiceButton();
+    return this.player.nbTurnsInJail > 0 && this.player.isPlayerTurn && this.displayRollDiceButton() && this.player.balance >= 1000;
   }
 
   endTurn(player: Player){
@@ -352,7 +352,7 @@ export class GameComponent implements OnInit {
   }
 
   updatePropertiesTableRendering(){
-    this.dataSource.data = this.player.properties;
+    this.dataSource.data = this.player.getPropertiesSorted();
   }
 
   openChanceDialog(player: Player, chanceEventMessage: string): void {
@@ -360,6 +360,18 @@ export class GameComponent implements OnInit {
       width: '150px',
       height: '210px',
       data: {player: player, chanceCardText : chanceEventMessage}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  seeProperties(player: Player){
+    const dialogRef = this.dialog.open(PropertiesDialogComponent, {
+      width: '600px',
+      height: '200px',
+      data: {humanPlayer: this.player, CPUPlayer: player}
     });
 
     dialogRef.afterClosed().subscribe(result => {
