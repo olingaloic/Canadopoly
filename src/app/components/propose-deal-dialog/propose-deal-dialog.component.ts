@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSliderChange } from '@angular/material/slider';
 import { Player } from 'src/app/model/player';
+import { Property } from 'src/app/model/square';
 
 export interface ProposeDealDialogData {
   humanPlayer: Player;
@@ -19,6 +21,7 @@ export class ProposeDealDialogComponent implements OnInit {
   CPUProperties = new FormControl();
   humanPlayer: Player;
   CPUPlayer: Player;
+  playerCashOffer: Number = 0;
   /*
   displayedColumns =
       ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
@@ -38,6 +41,23 @@ export class ProposeDealDialogComponent implements OnInit {
   }
   updatePropertiesTableRendering(){
     //this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
+  }
+
+  proposeDeal(){
+    this.playerProperties.value.forEach((property: Property) => {
+      console.log(property);
+      console.log(this.playerCashOffer)
+    });
+  }
+
+  formatLabel(value: number) {
+    value = Math.ceil(value/100)* 100 ;
+    console.log(value);
+    return '$' + value;
+  }
+
+  changePlayerCashOffer(event: MatSliderChange){
+    this.playerCashOffer = event.value;
   }
 
 }

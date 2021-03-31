@@ -20,7 +20,7 @@
         <th mat-header-cell *matHeaderCellDef>Rent Price</th>
         <ng-container *matCellDef="let property">
           <td mat-cell *ngIf="property.isCity()">${{property.rentPrices[property.nbHouses]}}</td>
-          <td mat-cell *ngIf="!property.isCity()">${{property.rentPrices[player.nbAirports]}}</td>
+          <td mat-cell *ngIf="!property.isCity()">${{property.rentPrices[CPUPlayer.nbAirports]}}</td>
           <td mat-cell *ngIf="property.isMortgaged">(Mortgaged)</td>
         </ng-container>
       </ng-container>

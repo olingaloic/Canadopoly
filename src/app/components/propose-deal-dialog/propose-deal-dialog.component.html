@@ -7,6 +7,16 @@
               (+{{playerProperties.value.length - 1}} {{playerProperties.value?.length === 2 ? 'other' : 'others'}})
             </span>
           </mat-select-trigger>
-      <mat-option *ngFor="let property of humanPlayer.getDealableProperties()" [value]="property.name">{{property.name}}</mat-option>
+      <mat-option *ngFor="let property of humanPlayer.getDealableProperties()" [value]="property.name" [name]="property">{{property.name}}</mat-option>
     </mat-select>
-  </mat-form-field>
+</mat-form-field>
+<mat-slider
+thumbLabel
+[displayWith]="formatLabel"
+tickInterval="100"
+min="100"
+[max]="humanPlayer.balance" (change)="changePlayerCashOffer($event)"></mat-slider>
+
+<button mat-button (click)="proposeDeal()">Propose Deal</button>
+
+
