@@ -1,7 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Player } from 'src/app/model/player';
+import { Property } from 'src/app/model/square';
+import { ProposeDealDialogComponent } from '../propose-deal-dialog/propose-deal-dialog.component';
 
 export interface PropertiesDialogData {
   humanPlayer: Player;
@@ -21,7 +23,8 @@ export class PropertiesDialogComponent implements OnInit {
       ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
   constructor(
     public dialogRef: MatDialogRef<PropertiesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: PropertiesDialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: PropertiesDialogData, public dialog: MatDialog) {}
+
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -33,6 +36,18 @@ export class PropertiesDialogComponent implements OnInit {
   }
   updatePropertiesTableRendering(){
     this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
+  }
+
+  openDealDialog(property: Property){
+    const dialogRef = this.dialog.open(ProposeDealDialogComponent, {
+      width: '600px',
+      height: '200px',
+      data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
 }

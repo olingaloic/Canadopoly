@@ -46,4 +46,19 @@ export class Player {
     getPropertiesSorted(){
         return this.properties.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
     }
+
+    getDealableProperties(){
+        var dealableProperties: Array<Property> = new Array();
+        this.getPropertiesSorted().forEach((property: Property) => {
+            if(property.isCity()){
+                let city = property as City;
+                if(city.nbHouses == 0) dealableProperties.push(city); 
+            }
+            else {
+                dealableProperties.push(property); 
+            }
+        });
+        console.log(dealableProperties.length);
+        return dealableProperties;
+    }
 }

@@ -1,6 +1,6 @@
 <div class="table-container">
 
-    <table mat-table [dataSource]="dataSource"  *ngIf="player.properties.length != 0; else noProperties">
+    <table mat-table [dataSource]="dataSource"  *ngIf="CPUPlayer.properties.length != 0; else noProperties">
       <ng-container matColumnDef="name" sticky>
         <th mat-header-cell *matHeaderCellDef>Property</th>
         <td mat-cell *matCellDef="let property"> {{property.name}} </td>
@@ -27,7 +27,7 @@
 
       <ng-container matColumnDef="deal" >
         <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let property"><button mat-button *ngIf="!property.isCity() || (property.isCity() && property.nbHouses == 0)" (click)="deal(property)">Propose Deal</button></td>
+        <td mat-cell *matCellDef="let property"><button mat-button *ngIf="!property.isCity() || (property.isCity() && property.nbHouses == 0)" (click)="openDealDialog(property)">Propose Deal</button></td>
 
       </ng-container>
 
@@ -36,5 +36,5 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
     </table>
-    <ng-template #noProperties>{{player.name}} doesn't have any property yet.</ng-template>
+    <ng-template #noProperties>{{CPUPlayer.name}} doesn't have any property yet.</ng-template>
   </div> 

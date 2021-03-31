@@ -8,7 +8,10 @@ import { GameComponent } from './components/game/game.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ChanceDialogComponent } from './components/chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from './components/properties-dialog/properties-dialog.component';
 import { ProposeDealDialogComponent } from './components/propose-deal-dialog/propose-deal-dialog.component';
@@ -30,12 +33,15 @@ import { ProposeDealDialogComponent } from './components/propose-deal-dialog/pro
     BrowserAnimationsModule,
     MatButtonModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    MatFormFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule
     
   ],
   exports: [
-    MatButtonModule,
-    MatTableModule  
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

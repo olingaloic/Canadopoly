@@ -1,1 +1,12 @@
-<p>propose-deal-dialog works!</p>
+<mat-form-field appearance="fill">
+    <mat-label>Your offer</mat-label>
+    <mat-select [formControl]="playerProperties" multiple>
+        <mat-select-trigger>
+            {{playerProperties.value ? playerProperties.value[0] : ''}}
+            <span *ngIf="playerProperties.value?.length > 1" class="example-additional-selection">
+              (+{{playerProperties.value.length - 1}} {{playerProperties.value?.length === 2 ? 'other' : 'others'}})
+            </span>
+          </mat-select-trigger>
+      <mat-option *ngFor="let property of humanPlayer.getDealableProperties()" [value]="property.name">{{property.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>

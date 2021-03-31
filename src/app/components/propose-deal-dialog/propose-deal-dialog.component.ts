@@ -1,6 +1,8 @@
 import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { Player } from 'src/app/model/player';
 
 export interface ProposeDealDialogData {
@@ -13,8 +15,9 @@ export interface ProposeDealDialogData {
   styleUrls: ['./propose-deal-dialog.component.css']
 })
 export class ProposeDealDialogComponent implements OnInit {
-
-  humanPlayer: Player
+  playerProperties = new FormControl();
+  CPUProperties = new FormControl();
+  humanPlayer: Player;
   CPUPlayer: Player;
   /*
   displayedColumns =
@@ -31,6 +34,7 @@ export class ProposeDealDialogComponent implements OnInit {
     this.CPUPlayer = this.data.CPUPlayer;
     this.humanPlayer = this.data.humanPlayer;
     this.updatePropertiesTableRendering();
+
   }
   updatePropertiesTableRendering(){
     //this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
