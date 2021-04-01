@@ -58,7 +58,26 @@ export class Player {
                 dealableProperties.push(property); 
             }
         });
-        console.log(dealableProperties.length);
         return dealableProperties;
+    }
+
+    getPropertyByName(name: String){
+        return this.properties.find(property => property.name == name);
+    }
+    
+    getNbPlayerPropertiesSameColour(property: Property){
+        var nbPlayerPropertiesSameColour: number = 1;
+        if(property.isCity()){
+            this.properties.forEach((playerProperty: Property) => {
+                if(playerProperty.isCity()){
+                    let city = property as City;
+                    let playerCity = playerProperty as City;
+                    if(city.tier == playerCity.tier) nbPlayerPropertiesSameColour++;
+                }
+              });
+        } else {
+            return this.nbAirports;
+        }
+        return nbPlayerPropertiesSameColour;
     }
 }

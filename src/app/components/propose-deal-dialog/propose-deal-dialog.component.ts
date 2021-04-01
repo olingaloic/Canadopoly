@@ -21,7 +21,11 @@ export class ProposeDealDialogComponent implements OnInit {
   CPUProperties = new FormControl();
   humanPlayer: Player;
   CPUPlayer: Player;
-  playerCashOffer: Number = 0;
+  playerNegotiationProperties: Array<Property>;
+  CPUNegotiationProperties: Array<Property>;
+  playerCashOffer: number = 0;
+  CPUCashOffer: number = 0;
+  unsatisfyingDeal: boolean;
   /*
   displayedColumns =
       ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
@@ -36,6 +40,8 @@ export class ProposeDealDialogComponent implements OnInit {
   ngOnInit(): void {
     this.CPUPlayer = this.data.CPUPlayer;
     this.humanPlayer = this.data.humanPlayer;
+
+
     this.updatePropertiesTableRendering();
 
   }
@@ -44,20 +50,62 @@ export class ProposeDealDialogComponent implements OnInit {
   }
 
   proposeDeal(){
-    this.playerProperties.value.forEach((property: Property) => {
-      console.log(property);
-      console.log(this.playerCashOffer)
+    this.playerNegotiationProperties = new Array();
+    this.CPUNegotiationProperties = new Array();
+    this.playerProperties.value.forEach((propertyName: String) => {
+      let property: Property = this.humanPlayer.getPropertyByName(propertyName);
+      this.playerNegotiationProperties.push(property);
     });
+    this.CPUProperties.value.forEach((propertyName: String) => {
+      let property: Property = this.CPUPlayer.getPropertyByName(propertyName);
+      this.CPUNegotiationProperties.push(property);
+    });
+    this.CPUDealFunction();
+    this.playerNegotiationProperties = null;
+    this.CPUNegotiationProperties = null;
   }
 
   formatLabel(value: number) {
     value = Math.ceil(value/100)* 100 ;
-    console.log(value);
     return '$' + value;
   }
 
   changePlayerCashOffer(event: MatSliderChange){
-    this.playerCashOffer = event.value;
+    var roundedValue = Math.ceil(event.value/100)* 100 ;
+    this.playerCashOffer = roundedValue;
+  
+  }
+
+  changeCPUCashOffer(event: MatSliderChange){
+    var roundedValue = Math.ceil(event.value/100)* 100 ;
+    this.CPUCashOffer = roundedValue;
+  }
+
+  CPUDealFunction(){
+    var CPUOfferValue: number = 0;
+    var playerOfferValue: number= 0;
+    this.CPUNegotiationProperties.forEach((property: Property) => {
+      if(property.isMortgaged){
+        CPUOfferValue += (property.propertyPrice/2) * this.CPUPlayer.getNbPlayerPropertiesSameColour(property);
+      } else {
+        CPUOfferValue += property.propertyPrice * this.CPUPlayer.getNbPlayerPropertiesSameColour(property);
+      }
+    });
+    CPUOfferValue += this.CPUCashOffer;
+    this.playerNegotiationProperties.forEach((property: Property) => {
+      if(property.isMortgaged){
+        playerOfferValue += (property.propertyPrice/2) * this.humanPlayer.getNbPlayerPropertiesSameColour(property);
+      } else {
+        playerOfferValue += property.propertyPrice * this.humanPlayer.getNbPlayerPropertiesSameColour(property);
+      }
+    });
+    playerOfferValue += this.playerCashOffer;
+    if(playerOfferValue > CPUOfferValue){
+      //swap player properties + budget transfer + board component 
+      this.dialogRef.close();
+    } else {
+      this.unsatisfyingDeal = true;
+    }
   }
 
 }

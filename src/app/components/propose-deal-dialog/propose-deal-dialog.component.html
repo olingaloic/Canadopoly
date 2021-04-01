@@ -1,22 +1,46 @@
-<mat-form-field appearance="fill">
-    <mat-label>Your offer</mat-label>
-    <mat-select [formControl]="playerProperties" multiple>
-        <mat-select-trigger>
-            {{playerProperties.value ? playerProperties.value[0] : ''}}
-            <span *ngIf="playerProperties.value?.length > 1" class="example-additional-selection">
-              (+{{playerProperties.value.length - 1}} {{playerProperties.value?.length === 2 ? 'other' : 'others'}})
-            </span>
-          </mat-select-trigger>
-      <mat-option *ngFor="let property of humanPlayer.getDealableProperties()" [value]="property.name" [name]="property">{{property.name}}</mat-option>
-    </mat-select>
-</mat-form-field>
-<mat-slider
-thumbLabel
-[displayWith]="formatLabel"
-tickInterval="100"
-min="100"
-[max]="humanPlayer.balance" (change)="changePlayerCashOffer($event)"></mat-slider>
-
+<div class="container">
+    <mat-form-field appearance="fill">
+        <mat-label>You give</mat-label>
+        <mat-select [formControl]="playerProperties" multiple>
+            <mat-select-trigger>
+                {{playerProperties.value ? playerProperties.value[0] : ''}}
+                <span *ngIf="playerProperties.value?.length > 1" class="example-additional-selection">
+                  (+{{playerProperties.value.length - 1}} {{playerProperties.value?.length === 2 ? 'other' : 'others'}})
+                </span>
+              </mat-select-trigger>
+          <mat-option *ngFor="let property of humanPlayer.getDealableProperties()" [value]="property.name" [name]="property">{{property.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-slider
+    thumbLabel
+    [displayWith]="formatLabel"
+    tickInterval="100"
+    min="100"
+    [max]="humanPlayer.balance" (change)="changePlayerCashOffer($event)"></mat-slider>
+</div>
+<div class="container">
+    <mat-form-field appearance="fill">
+        <mat-label>They give</mat-label>
+        <mat-select [formControl]="CPUProperties" multiple>
+            <mat-select-trigger>
+                {{CPUProperties.value ? CPUProperties.value[0] : ''}}
+                <span *ngIf="CPUProperties.value?.length > 1" class="example-additional-selection">
+                  (+{{CPUProperties.value.length - 1}} {{CPUProperties.value?.length === 2 ? 'other' : 'others'}})
+                </span>
+              </mat-select-trigger>
+          <mat-option *ngFor="let property of CPUPlayer.getDealableProperties()" [value]="property.name" [name]="property">{{property.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-slider
+    thumbLabel
+    [displayWith]="formatLabel"
+    tickInterval="100"
+    min="100"
+    [max]="CPUPlayer.balance" (change)="changeCPUCashOffer($event)"></mat-slider>
+</div>
+    
+    
+<p *ngIf="unsatisfyingDeal">Is this a joke ? There's no way I can accept your offer.</p>
 <button mat-button (click)="proposeDeal()">Propose Deal</button>
 
 

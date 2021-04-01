@@ -20,7 +20,7 @@ export class PropertiesDialogComponent implements OnInit {
   CPUPlayer: Player;
   dataSource = new MatTableDataSource();
   displayedColumns =
-      ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
+      ['name', 'nbHouses', 'propertyPrice', 'rentPrice'];
   constructor(
     public dialogRef: MatDialogRef<PropertiesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PropertiesDialogData, public dialog: MatDialog) {}
@@ -38,10 +38,10 @@ export class PropertiesDialogComponent implements OnInit {
     this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
   }
 
-  openDealDialog(property: Property){
+  openDealDialog(){
     const dialogRef = this.dialog.open(ProposeDealDialogComponent, {
       width: '600px',
-      height: '200px',
+      height: '300px',
       data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer}
     });
 
