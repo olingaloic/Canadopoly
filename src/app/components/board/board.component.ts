@@ -146,8 +146,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
   }
 
-  renderBuyProperty(player : Player){
-    var square = this.squares[player.position].nativeElement;
+  renderBuyProperty(player : Player, position: number){
+    var square = this.squares[position].nativeElement;
     console.log(square.style);
     square.style.backgroundColor = player.colour;
   }

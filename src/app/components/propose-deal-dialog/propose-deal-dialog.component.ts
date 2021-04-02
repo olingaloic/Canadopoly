@@ -1,4 +1,4 @@
-import { Inject } from '@angular/core';
+import { Inject, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -6,10 +6,14 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSliderChange } from '@angular/material/slider';
 import { Player } from 'src/app/model/player';
 import { Property } from 'src/app/model/square';
+import { BoardComponent } from '../board/board.component';
+import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
 
 export interface ProposeDealDialogData {
   humanPlayer: Player;
   CPUPlayer: Player;
+  boardComponent: BoardComponent;
+  propertiesDialogRef: MatDialogRef<PropertiesDialogComponent>;
 }
 @Component({
   selector: 'app-propose-deal-dialog',
@@ -26,22 +30,27 @@ export class ProposeDealDialogComponent implements OnInit {
   playerCashOffer: number = 0;
   CPUCashOffer: number = 0;
   unsatisfyingDeal: boolean;
+  boardComponent: BoardComponent;
+  propertiesDialogRef: MatDialogRef<PropertiesDialogComponent>;
+
+  
   /*
   displayedColumns =
       ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
   */
   constructor(
-    public dialogRef: MatDialogRef<ProposeDealDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ProposeDealDialogComponent) {}
+    public proposeDealDialogRef: MatDialogRef<ProposeDealDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ProposeDealDialogData) {}
+
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.proposeDealDialogRef.close();
   }
   ngOnInit(): void {
     this.CPUPlayer = this.data.CPUPlayer;
     this.humanPlayer = this.data.humanPlayer;
-
-
+    this.boardComponent = this.data.boardComponent;
+    this.propertiesDialogRef = this.data.propertiesDialogRef;
     this.updatePropertiesTableRendering();
 
   }
@@ -102,10 +111,32 @@ export class ProposeDealDialogComponent implements OnInit {
     playerOfferValue += this.playerCashOffer;
     if(playerOfferValue > CPUOfferValue){
       //swap player properties + budget transfer + board component 
-      this.dialogRef.close();
+      this.doTransfer();
+      console.log(this.proposeDealDialogRef)
+      this.proposeDealDialogRef.close();
+      console.log(this.propertiesDialogRef)
+      this.propertiesDialogRef.close();
     } else {
       this.unsatisfyingDeal = true;
     }
+  }
+
+  doTransfer(){
+    console.log(this.boardComponent)
+    this.playerNegotiationProperties.forEach((property: Property) => {
+      this.humanPlayer.removePlayerProperty(property);
+      this.CPUPlayer.properties.push(property);
+      this.boardComponent.renderBuyProperty(this.CPUPlayer, property.id);
+    });
+    this.CPUNegotiationProperties.forEach((property: Property) => {
+      this.CPUPlayer.removePlayerProperty(property);
+      this.humanPlayer.properties.push(property);
+      this.boardComponent.renderBuyProperty(this.humanPlayer, property.id);
+    });
+    this.humanPlayer.balance -= this.playerCashOffer - this.CPUCashOffer;
+    this.CPUPlayer.balance -= this.CPUCashOffer - this.playerCashOffer;
+
+
   }
 
 }

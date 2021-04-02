@@ -80,4 +80,9 @@ export class Player {
         }
         return nbPlayerPropertiesSameColour;
     }
+
+    removePlayerProperty(property: Property){
+        var index = this.properties.indexOf(property);
+        if (index >= 0) this.properties.splice( index, 1 );
+    }
 }

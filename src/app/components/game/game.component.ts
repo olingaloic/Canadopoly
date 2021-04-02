@@ -66,7 +66,8 @@ export class GameComponent implements OnInit {
     player.properties.push(property);
     property.player = player;
     player.balance -= this.properties.get(player.position).propertyPrice;
-    this.boardComponent.renderBuyProperty(player);
+    this.boardComponent.renderBuyProperty(player, player.position);
+    console.log(this.boardComponent)
     if (property.isCity()){
       let chosenCity = property as City;
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(chosenCity);
@@ -371,7 +372,7 @@ export class GameComponent implements OnInit {
     const dialogRef = this.dialog.open(PropertiesDialogComponent, {
       width: '600px',
       height: '200px',
-      data: {humanPlayer: this.player, CPUPlayer: player}
+      data: {humanPlayer: this.player, CPUPlayer: player, boardComponent: this.boardComponent}
     });
 
     dialogRef.afterClosed().subscribe(result => {

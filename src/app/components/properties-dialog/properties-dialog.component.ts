@@ -3,11 +3,13 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatTableDataSource } from '@angular/material/table';
 import { Player } from 'src/app/model/player';
 import { Property } from 'src/app/model/square';
+import { BoardComponent } from '../board/board.component';
 import { ProposeDealDialogComponent } from '../propose-deal-dialog/propose-deal-dialog.component';
 
 export interface PropertiesDialogData {
   humanPlayer: Player;
   CPUPlayer: Player;
+  boardComponent: BoardComponent;
 }
 @Component({
   selector: 'app-properties-dialog',
@@ -18,6 +20,7 @@ export class PropertiesDialogComponent implements OnInit {
   
   humanPlayer: Player
   CPUPlayer: Player;
+  boardComponent: BoardComponent;
   dataSource = new MatTableDataSource();
   displayedColumns =
       ['name', 'nbHouses', 'propertyPrice', 'rentPrice'];
@@ -32,6 +35,7 @@ export class PropertiesDialogComponent implements OnInit {
   ngOnInit(): void {
     this.CPUPlayer = this.data.CPUPlayer;
     this.humanPlayer = this.data.humanPlayer;
+    this.boardComponent = this.data.boardComponent;
     this.updatePropertiesTableRendering();
   }
   updatePropertiesTableRendering(){
@@ -42,7 +46,7 @@ export class PropertiesDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProposeDealDialogComponent, {
       width: '600px',
       height: '300px',
-      data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer}
+      data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer, boardComponent: this.boardComponent, propertiesDialogRef: this.dialogRef}
     });
 
     dialogRef.afterClosed().subscribe(result => {
