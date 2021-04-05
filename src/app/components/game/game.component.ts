@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ChanceDialogComponent } from '../chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
+import { CpuDealDialogComponent } from '../cpu-deal-dialog/cpu-deal-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -253,9 +254,56 @@ export class GameComponent implements OnInit {
     }
     if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
       this.buyProperty(this.CPUPlayer)
+    
+    for(let property of this.CPUPlayer.getDealableProperties()){
+      var randomNumber = this.generateRandomNumber(1, 4);
+      if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
+        this.CPUPlayerProposeDeal(property);
+        break;
+      }
+    }   
     this.CPUPlayer.isPlayerTurn = false;  
     this.player.isPlayerTurn = true;
 
+  }
+
+  getPropertiesCPUWants(chosenProperty: Property){
+    var propertiesCPUWants : Array<Property> = new Array();
+    if(chosenProperty.isCity()){
+      var humanPlayerCities = this.player.getDealableCities();
+      let chosenCity = chosenProperty as City;
+      humanPlayerCities.forEach((city: City) => {
+        if(city.tier == chosenCity.tier)
+          propertiesCPUWants.push(city);
+      });
+    } else {
+      var humanPlayerAirports = this.player.getDealableAirports();
+      humanPlayerAirports.forEach((airport: Property) => {
+          propertiesCPUWants.push(airport);
+      });
+    }
+    return propertiesCPUWants;
+  }
+  getPropertiesValue(humanPlayerDealProperties: Array<Property>){
+    var propertiesValue = 0;
+    humanPlayerDealProperties.forEach((property: Property) => {
+      propertiesValue += property.propertyPrice + 1000;
+    });
+    return propertiesValue;
+  }
+  CPUPlayerProposeDeal(property: Property){
+    var humanPlayerDealProperties: Array<Property> = this.getPropertiesCPUWants(property);
+    var humanPlayerDealPropertiesValue = this.getPropertiesValue(humanPlayerDealProperties);
+    var CPUPlayerDealProperties: Array<Property> = this.CPUPlayer.getPropertiesEquivalentValue(humanPlayerDealProperties, humanPlayerDealPropertiesValue);
+    const dialogRef = this.dialog.open(CpuDealDialogComponent, {
+      width: '600px',
+      height: '450px',
+      data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, humanPropertiesOffer: humanPlayerDealProperties, CPUPropertiesOffer: CPUPlayerDealProperties}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
   movePlayerToJail(player: Player){
