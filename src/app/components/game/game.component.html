@@ -40,7 +40,7 @@
               <ng-container matColumnDef="buyHouse" >
                 <th mat-header-cell *matHeaderCellDef></th>
                 <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf=(property.isHouseBuyable)><button mat-mini-fab color="success" class="success" (click)="buyHouse(property)" ><span class="material-icons">home</span>
+                  <td mat-cell *ngIf=(property.isHouseBuyable)><button mat-mini-fab color="success" class="success" (click)="buyHouse(player, property)" ><span class="material-icons">home</span>
                   </button></td>
                 </ng-container>
               </ng-container>

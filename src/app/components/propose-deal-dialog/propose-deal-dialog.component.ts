@@ -6,6 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSliderChange } from '@angular/material/slider';
 import { Player } from 'src/app/model/player';
 import { Property } from 'src/app/model/square';
+import { DealService } from 'src/app/service/deal-service';
 import { BoardComponent } from '../board/board.component';
 import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
 
@@ -13,6 +14,7 @@ export interface ProposeDealDialogData {
   humanPlayer: Player;
   CPUPlayer: Player;
   boardComponent: BoardComponent;
+
   propertiesDialogRef: MatDialogRef<PropertiesDialogComponent>;
 }
 @Component({
@@ -32,6 +34,7 @@ export class ProposeDealDialogComponent implements OnInit {
   unsatisfyingDeal: boolean;
   boardComponent: BoardComponent;
   propertiesDialogRef: MatDialogRef<PropertiesDialogComponent>;
+  dealService: DealService;
 
   
   /*
@@ -52,6 +55,7 @@ export class ProposeDealDialogComponent implements OnInit {
     this.boardComponent = this.data.boardComponent;
     this.propertiesDialogRef = this.data.propertiesDialogRef;
     this.updatePropertiesTableRendering();
+    this.dealService = new DealService(this.boardComponent);
 
   }
   updatePropertiesTableRendering(){
@@ -59,19 +63,17 @@ export class ProposeDealDialogComponent implements OnInit {
   }
 
   proposeDeal(){
-    this.playerNegotiationProperties = new Array();
-    this.CPUNegotiationProperties = new Array();
+    this.humanPlayer.negotiationProperties = new Array();
+    this.CPUPlayer.negotiationProperties = new Array();
     this.playerProperties.value.forEach((propertyName: String) => {
       let property: Property = this.humanPlayer.getPropertyByName(propertyName);
-      this.playerNegotiationProperties.push(property);
+      this.humanPlayer.negotiationProperties.push(property);
     });
     this.CPUProperties.value.forEach((propertyName: String) => {
       let property: Property = this.CPUPlayer.getPropertyByName(propertyName);
-      this.CPUNegotiationProperties.push(property);
+      this.CPUPlayer.negotiationProperties.push(property);
     });
     this.CPUDealFunction();
-    this.playerNegotiationProperties = null;
-    this.CPUNegotiationProperties = null;
   }
 
   formatLabel(value: number) {
@@ -81,37 +83,41 @@ export class ProposeDealDialogComponent implements OnInit {
 
   changePlayerCashOffer(event: MatSliderChange){
     var roundedValue = Math.ceil(event.value/100)* 100 ;
-    this.playerCashOffer = roundedValue;
+    this.humanPlayer.cashOffer = roundedValue;
   
   }
 
   changeCPUCashOffer(event: MatSliderChange){
     var roundedValue = Math.ceil(event.value/100)* 100 ;
-    this.CPUCashOffer = roundedValue;
+    this.CPUPlayer.cashOffer = roundedValue;
   }
 
   CPUDealFunction(){
     var CPUOfferValue: number = 0;
-    var playerOfferValue: number= 0;
-    this.CPUNegotiationProperties.forEach((property: Property) => {
+    var playerOfferValue: number = 0;
+    this.CPUPlayer.negotiationProperties.forEach((property: Property) => {
       if(property.isMortgaged){
         CPUOfferValue += (property.propertyPrice/2) * this.CPUPlayer.getNbPlayerPropertiesSameColour(property);
       } else {
         CPUOfferValue += property.propertyPrice * this.CPUPlayer.getNbPlayerPropertiesSameColour(property);
       }
     });
-    CPUOfferValue += this.CPUCashOffer;
-    this.playerNegotiationProperties.forEach((property: Property) => {
+    CPUOfferValue += this.CPUPlayer.cashOffer;
+    this.humanPlayer.negotiationProperties.forEach((property: Property) => {
       if(property.isMortgaged){
         playerOfferValue += (property.propertyPrice/2) * this.humanPlayer.getNbPlayerPropertiesSameColour(property);
       } else {
         playerOfferValue += property.propertyPrice * this.humanPlayer.getNbPlayerPropertiesSameColour(property);
       }
     });
-    playerOfferValue += this.playerCashOffer;
+    playerOfferValue += this.humanPlayer.cashOffer;
+    console.log("PLAYER OFFER : " + playerOfferValue)
+      console.log("CPU OFFER : " + CPUOfferValue)
     if(playerOfferValue > CPUOfferValue){
+      
+
       //swap player properties + budget transfer + board component 
-      this.doTransfer();
+      this.dealService.doTransfer(this.humanPlayer, this.CPUPlayer);
       console.log(this.proposeDealDialogRef)
       this.proposeDealDialogRef.close();
       console.log(this.propertiesDialogRef)
@@ -119,24 +125,6 @@ export class ProposeDealDialogComponent implements OnInit {
     } else {
       this.unsatisfyingDeal = true;
     }
-  }
-
-  doTransfer(){
-    console.log(this.boardComponent)
-    this.playerNegotiationProperties.forEach((property: Property) => {
-      this.humanPlayer.removePlayerProperty(property);
-      this.CPUPlayer.properties.push(property);
-      this.boardComponent.renderBuyProperty(this.CPUPlayer, property.id);
-    });
-    this.CPUNegotiationProperties.forEach((property: Property) => {
-      this.CPUPlayer.removePlayerProperty(property);
-      this.humanPlayer.properties.push(property);
-      this.boardComponent.renderBuyProperty(this.humanPlayer, property.id);
-    });
-    this.humanPlayer.balance -= this.playerCashOffer - this.CPUCashOffer;
-    this.CPUPlayer.balance -= this.CPUCashOffer - this.playerCashOffer;
-
-
   }
 
 }

@@ -109,7 +109,11 @@ export class GameComponent implements OnInit {
       else {
         city.isHouseBuyable = areHousesBuyable;
       }
+
+      //console.log(city.name +  " : " + areHousesBuyable);
+
     });
+
     
   }
 
@@ -177,9 +181,7 @@ export class GameComponent implements OnInit {
 
   }
 
-  buyHouse(property: Property){
-    let city = property as City;
-    let player = city.player;
+  buyHouse(player: Player, city: City){
     player.balance -= city.housePrice;
     city.nbHouses++;
     let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
@@ -227,7 +229,9 @@ export class GameComponent implements OnInit {
       property.player.balance += property.getCurrentRentPrice();
     }
     if(player.name == "Human Player")
-      this.canHumanEndTurn = true;    
+      this.canHumanEndTurn = true;
+
+    
   }
 
   displayGetFreeButton(){
@@ -242,7 +246,6 @@ export class GameComponent implements OnInit {
     }
   }
   CPUPlayerPlay() {
-    //throw new Error('Method not implemented.');
     var position;
     var property;
     if(this.CPUPlayer.nbTurnsInJail > 3 && this.CPUPlayer.balance >= 1000){
@@ -261,7 +264,21 @@ export class GameComponent implements OnInit {
         this.CPUPlayerProposeDeal(property);
         break;
       }
-    }   
+    }
+    this.CPUPlayer.properties.forEach((property: Property) => {
+      if(property.isCity()){
+        let city = property as City;
+        while(city.isHouseBuyable){
+          this.buyHouse(this.CPUPlayer, city);
+          alert("Herr CPU Player bought a new house in : " + city.name);
+        }
+        
+         
+        
+          
+
+      }
+    });
     this.CPUPlayer.isPlayerTurn = false;  
     this.player.isPlayerTurn = true;
 
@@ -292,17 +309,37 @@ export class GameComponent implements OnInit {
     return propertiesValue;
   }
   CPUPlayerProposeDeal(property: Property){
-    var humanPlayerDealProperties: Array<Property> = this.getPropertiesCPUWants(property);
-    var humanPlayerDealPropertiesValue = this.getPropertiesValue(humanPlayerDealProperties);
-    var CPUPlayerDealProperties: Array<Property> = this.CPUPlayer.getPropertiesEquivalentValue(humanPlayerDealProperties, humanPlayerDealPropertiesValue);
+    this.player.negotiationProperties = this.getPropertiesCPUWants(property);
+    var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
+    this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
     const dialogRef = this.dialog.open(CpuDealDialogComponent, {
-      width: '600px',
+      width: '500px',
       height: '450px',
-      data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, humanPropertiesOffer: humanPlayerDealProperties, CPUPropertiesOffer: CPUPlayerDealProperties}
+      data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+      
+      this.setHousesBuyableAfterDeal();
+      this.updatePropertiesTableRendering();
+    });
+  }
+  setHousesBuyableAfterDeal() {
+    this.player.properties.forEach((property: Property) => {
+      if(property.isCity()){
+        let city = property as City;
+        let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
+          this.setHousesBuyable(citiesOfTheSameTier, this.player);
+      }
+    });
+
+    this.CPUPlayer.properties.forEach((property: Property) => {
+      if(property.isCity()){
+        let city = property as City;
+        let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
+          this.setHousesBuyable(citiesOfTheSameTier, this.CPUPlayer);
+      }
     });
   }
 
@@ -419,11 +456,13 @@ export class GameComponent implements OnInit {
   seeProperties(player: Player){
     const dialogRef = this.dialog.open(PropertiesDialogComponent, {
       width: '600px',
-      height: '200px',
+      height: '400px',
       data: {humanPlayer: this.player, CPUPlayer: player, boardComponent: this.boardComponent}
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.updatePropertiesTableRendering();
+      this.setHousesBuyableAfterDeal();
       console.log('The dialog was closed');
     });
   }
@@ -433,5 +472,5 @@ export class GameComponent implements OnInit {
     player.balance -= 1000;
     this.canHumanEndTurn = true;
   }
-
+  
 }
