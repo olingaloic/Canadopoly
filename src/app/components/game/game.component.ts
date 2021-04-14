@@ -26,6 +26,7 @@ export class GameComponent implements OnInit {
   CPUPlayer: Player;
   canHumanEndTurn: boolean;
   diceValue: number;
+  isCPUPropositionDialogOpened: boolean = false;
   properties: Map<number, Property>;
   dataSource = new MatTableDataSource();
   displayedColumns =
@@ -177,8 +178,6 @@ export class GameComponent implements OnInit {
     this.setPropertiesMorgageable(citiesOfTheSameTier);
     this.setHousesBuyable(citiesOfTheSameTier, player);
     this.updatePropertiesTableRendering();
-
-
   }
 
   buyHouse(player: Player, city: City){
@@ -230,8 +229,6 @@ export class GameComponent implements OnInit {
     }
     if(player.name == "Human Player")
       this.canHumanEndTurn = true;
-
-    
   }
 
   displayGetFreeButton(){
@@ -257,11 +254,18 @@ export class GameComponent implements OnInit {
     }
     if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
       this.buyProperty(this.CPUPlayer)
+    if(this.CPUPlayer.balance < 0){
+      while(this.CPUPlayer.getFirstPropertyMortgageable() != undefined)
+        this.mortgageProperty(this.CPUPlayer.getFirstPropertyMortgageable())
+    }
     
+    this.CPUProposeDealBankruptcy();
+
     for(let property of this.CPUPlayer.getDealableProperties()){
       var randomNumber = this.generateRandomNumber(1, 4);
       if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
-        this.CPUPlayerProposeDeal(property);
+        this.player.negotiationProperties = this.getPropertiesCPUWants(property);
+        this.CPUPlayerProposeDeal(false);
         break;
       }
     }
@@ -272,9 +276,6 @@ export class GameComponent implements OnInit {
           this.buyHouse(this.CPUPlayer, city);
           alert("Herr CPU Player bought a new house in : " + city.name);
         }
-        
-         
-        
           
 
       }
@@ -282,6 +283,24 @@ export class GameComponent implements OnInit {
     this.CPUPlayer.isPlayerTurn = false;  
     this.player.isPlayerTurn = true;
 
+  }
+
+  async CPUProposeDealBankruptcy(){
+    while(this.CPUPlayer.balance < 0 && !this.isCPUPropositionDialogOpened){
+      this.CPUPlayerProposeDeal(true);
+      this.player.cashOffer = - this.CPUPlayer.balance + 1000;
+      var CPUPlayerDealPropertiesValue = this.player.cashOffer;
+      this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.CPUPlayer.getDealableProperties(), CPUPlayerDealPropertiesValue);
+      this.isCPUPropositionDialogOpened = true;
+      const dialogRef = this.dialog.open(CpuDealDialogComponent, {
+        width: '500px',
+        height: '450px',
+        data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
+      });
+      var result = await dialogRef.afterClosed().toPromise();
+      if(!result && this.CPUPlayer.balance < 0)
+        this.isCPUPropositionDialogOpened = false; 
+    }
   }
 
   getPropertiesCPUWants(chosenProperty: Property){
@@ -308,19 +327,25 @@ export class GameComponent implements OnInit {
     });
     return propertiesValue;
   }
-  CPUPlayerProposeDeal(property: Property){
-    this.player.negotiationProperties = this.getPropertiesCPUWants(property);
-    var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
-    this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
+  async CPUPlayerProposeDeal(isCPURisksBankruptcy){
+    if(isCPURisksBankruptcy){
+      this.player.cashOffer = - this.CPUPlayer.balance + 1000;
+      var CPUPlayerDealPropertiesValue = this.player.cashOffer;
+      this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.CPUPlayer.getDealableProperties(), CPUPlayerDealPropertiesValue);
+    } else {
+      var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
+      this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
+    }
+    this.isCPUPropositionDialogOpened = true;
     const dialogRef = this.dialog.open(CpuDealDialogComponent, {
       width: '500px',
       height: '450px',
       data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    await dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      
+      this.isCPUPropositionDialogOpened = false;
       this.setHousesBuyableAfterDeal();
       this.updatePropertiesTableRendering();
     });

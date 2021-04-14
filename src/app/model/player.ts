@@ -8,6 +8,8 @@ export class Player {
     balance: number;
     nbTurnsInJail: number;
     properties: Array<Property>;
+    negotiationProperties: Array<Property>;
+    cashOffer: number = 0;
     position: number;
     nbAirports: number;
     colour: string;
@@ -15,7 +17,8 @@ export class Player {
     constructor(name, colour) {
         this.name = name;
         this.colour = colour;
-        this.balance = 50000;
+        this.balance = 300000;
+        if(name == "CPU Player") this.balance = 3000;
         this.position = 0;
         this.nbAirports = 0;
         this.properties = new Array<Property>();
@@ -83,6 +86,50 @@ export class Player {
 
     removePlayerProperty(property: Property){
         var index = this.properties.indexOf(property);
-        if (index >= 0) this.properties.splice( index, 1 );
+        if (index >= 0) this.properties.splice(index, 1);
     }
+
+    getDealableCities(){
+        return this.getDealableProperties().filter(property => property.isCity() );
+    }
+    getDealableAirports(){
+        return this.getDealableProperties().filter(property => !property.isCity());
+    }
+    getPropertiesEquivalentValue(humanPlayerDealProperties: Array<Property>, propertiesValue: number){
+        var playerDealableProperties = this.getDealableProperties();
+        var properties = new Array<Property>();
+        
+            for (let property of playerDealableProperties){
+                if(humanPlayerDealProperties[0].isCity()){
+                    //property which doesn't belong to the tier or not a airport if cpu wants an airport
+                    if(property.isCity()){
+                        let city = property as City;
+                        let chosenCity = humanPlayerDealProperties[0] as City;
+                        if(city.tier != chosenCity.tier) properties.push(city);
+                    } else {
+                        properties.push(property);
+                        propertiesValue -= property.propertyPrice;
+                    }
+                } else {
+                    if(property.isCity()){
+                        properties.push(property);
+                        propertiesValue -= property.propertyPrice;
+                    }
+                }
+                
+                if(propertiesValue < 0) break;
+            }
+            return properties;
+    }
+
+    getFirstPropertyMortgageable() {
+        for(let property of this.properties){
+            if(property.isMortgageable){
+                //console.log("Property mortgageable : " + property.name + " for : $" + property.mortgageValue);
+                return property;
+            }
+        }
+        return undefined;
+    }
+
 }
