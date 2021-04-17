@@ -251,15 +251,14 @@ export class GameComponent implements OnInit {
       this.rollDice(this.CPUPlayer);
       position = this.CPUPlayer.position;
       property = this.properties.get(position);
+      if(this.CPUPlayer.balance < 0){
+        while(this.CPUPlayer.getFirstPropertyMortgageable() != undefined)
+          this.mortgageProperty(this.CPUPlayer.getFirstPropertyMortgageable())
+          this.CPUProposeDealBankruptcy();
+      }
     }
     if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
       this.buyProperty(this.CPUPlayer)
-    if(this.CPUPlayer.balance < 0){
-      while(this.CPUPlayer.getFirstPropertyMortgageable() != undefined)
-        this.mortgageProperty(this.CPUPlayer.getFirstPropertyMortgageable())
-    }
-    
-    this.CPUProposeDealBankruptcy();
 
     for(let property of this.CPUPlayer.getDealableProperties()){
       var randomNumber = this.generateRandomNumber(1, 4);
@@ -287,11 +286,12 @@ export class GameComponent implements OnInit {
 
   async CPUProposeDealBankruptcy(){
     while(this.CPUPlayer.balance < 0 && !this.isCPUPropositionDialogOpened){
-      this.CPUPlayerProposeDeal(true);
       this.player.cashOffer = - this.CPUPlayer.balance + 1000;
       var CPUPlayerDealPropertiesValue = this.player.cashOffer;
       this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.CPUPlayer.getDealableProperties(), CPUPlayerDealPropertiesValue);
       this.isCPUPropositionDialogOpened = true;
+      console.log(this.player)
+      console.log(this.CPUPlayer)
       const dialogRef = this.dialog.open(CpuDealDialogComponent, {
         width: '500px',
         height: '450px',

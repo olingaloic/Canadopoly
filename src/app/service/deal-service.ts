@@ -10,20 +10,26 @@ export class DealService {
     }
 
     doTransfer(humanPlayer: Player, CPUPlayer: Player){
-            humanPlayer.negotiationProperties.forEach((property: Property) => {
+            if(humanPlayer.negotiationProperties != undefined){
+              humanPlayer.negotiationProperties.forEach((property: Property) => {
                 humanPlayer.removePlayerProperty(property);
                 CPUPlayer.properties.push(property);
                 property.player = CPUPlayer;
                 this.boardComponent.renderBuyProperty(CPUPlayer, property.id);
               });
+            }
+            if(CPUPlayer.negotiationProperties != undefined){
               CPUPlayer.negotiationProperties.forEach((property: Property) => {
                 CPUPlayer.removePlayerProperty(property);
                 humanPlayer.properties.push(property);
                 property.player = humanPlayer;
                 this.boardComponent.renderBuyProperty(humanPlayer, property.id);
               });
-              humanPlayer.balance -= humanPlayer.cashOffer - CPUPlayer.cashOffer;
-              CPUPlayer.balance -= CPUPlayer.cashOffer - humanPlayer.cashOffer;
+            }
+            
+              
+            humanPlayer.balance -= humanPlayer.cashOffer - CPUPlayer.cashOffer;
+            CPUPlayer.balance -= CPUPlayer.cashOffer - humanPlayer.cashOffer;
 
             humanPlayer.negotiationProperties = null;
             CPUPlayer.negotiationProperties = null;

@@ -6,6 +6,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
     </table>
+    <p>${{humanPlayer.cashOffer}}</p>
     <table mat-table [dataSource]="dataSourceCPU" style="display: inline-block">
       <ng-container matColumnDef="name" sticky>
         <th mat-header-cell *matHeaderCellDef>They give : </th>
@@ -14,6 +15,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
     </table>
+    <p>${{CPUPlayer.cashOffer}}</p>
     <button mat-button color="primary" (click)="acceptDeal()" >Accept</button>
     <button mat-button color="primary" (click)="refuseDeal()" >Refuse</button>
 
