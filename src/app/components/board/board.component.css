@@ -1,8 +1,12 @@
 .noSquareHere {
     background-color: #8FBC72;
 }
+.diceSquare {
+  background-color: #8FBC72;
+  text-align: center;
+}
 
-td:not(.noSquareHere){
+td:not(.noSquareHere):not(.diceSquare){
     background-color: white(71, 255, 47);
     width: 80px;
     height: 80px;

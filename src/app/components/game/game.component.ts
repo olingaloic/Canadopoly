@@ -29,6 +29,7 @@ export class GameComponent implements OnInit {
   isCPUPropositionDialogOpened: boolean = false;
   properties: Map<number, Property>;
   dataSource = new MatTableDataSource();
+  events: Array<string>;
   displayedColumns =
       ['name', 'nbHouses', 'rentPrice', 'buyHouse', 'removeHouse', 'mortgage', 'removeMortgage'];
 
@@ -36,6 +37,7 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.properties = new Map();
+    this.events = new Array<string>();
     this.player = new Player("Human Player", "#ff6666");
     this.player.isPlayerTurn = true;
     this.CPUPlayer = new Player("CPU Player", "#6c5de8");
@@ -78,6 +80,7 @@ export class GameComponent implements OnInit {
     } else {
       player.nbAirports++;
     }
+    this.events.unshift(player.name + " has bought " + property.name + ".");
     this.updatePropertiesTableRendering();
   }
 
@@ -110,9 +113,7 @@ export class GameComponent implements OnInit {
       else {
         city.isHouseBuyable = areHousesBuyable;
       }
-
-      //console.log(city.name +  " : " + areHousesBuyable);
-
+    
     });
 
     
@@ -201,6 +202,7 @@ export class GameComponent implements OnInit {
   rollDice(player: Player){
     var property : Property;
     this.diceValue = this.generateRandomNumber(1, 6);
+    this.boardComponent.renderDiceValue(this.diceValue);
     
     if(player.nbTurnsInJail > 0){
       player.nbTurnsInJail = (this.diceValue == 6) ? 0 : player.nbTurnsInJail - 1;

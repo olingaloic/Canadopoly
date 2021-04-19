@@ -21,6 +21,9 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @ViewChild('CPUPawn') 
   CPUPawn: ElementRef;
 
+  @ViewChild('dice') 
+  dice: ElementRef;
+
   @ViewChild('square0')
   square0: ElementRef;
 
@@ -154,6 +157,34 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   renderBuyHouse(city: City) {
     //throw new Error('Method not implemented.');
+  }
+
+  renderDiceValue(diceNumber: number){
+    var dice = this.dice.nativeElement;
+    switch(diceNumber){
+      case 1: 
+        dice.src = "assets/img/one.png";
+        break;
+      case 2:
+        dice.src = "assets/img/two.png";
+        break;
+      case 3:
+        dice.src = "assets/img/three.png";
+        break;
+      case 4:
+        dice.src = "assets/img/four.png";
+        break;
+      case 5:
+        dice.src = "assets/img/five.png";
+        break;
+      case 6:
+        dice.src = "assets/img/six.png";
+        break;
+      default:
+        dice.src = "assets/img/one.png";
+
+    }
+
   }
 }
 

@@ -12,6 +12,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
+import {MatListModule} from '@angular/material/list';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ChanceDialogComponent } from './components/chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from './components/properties-dialog/properties-dialog.component';
@@ -40,7 +41,8 @@ import { CpuDealDialogComponent } from './components/cpu-deal-dialog/cpu-deal-di
     FormsModule,
     ReactiveFormsModule,
     MatSelectModule,
-    MatSliderModule
+    MatSliderModule,
+    MatListModule
     
   ],
   exports: [
