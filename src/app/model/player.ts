@@ -125,11 +125,20 @@ export class Player {
     getFirstPropertyMortgageable() {
         for(let property of this.properties){
             if(property.isMortgageable){
-                //console.log("Property mortgageable : " + property.name + " for : $" + property.mortgageValue);
                 return property;
             }
         }
         return undefined;
     }
+    getFirstPropertyHouseRemovable() {
+        for(let property of this.properties){
+            if(property.isCity){
+                let city = property as City;
+                if(city.nbHouses > 0) return property;
+            }
+        }
+        return undefined;
+    }
+ 
 
 }

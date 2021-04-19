@@ -245,17 +245,26 @@ export class GameComponent implements OnInit {
   CPUPlayerPlay() {
     var position;
     var property;
-    if(this.CPUPlayer.nbTurnsInJail > 3 && this.CPUPlayer.balance >= 1000){
+    if(this.CPUPlayer.nbTurnsInJail > 0 && this.CPUPlayer.balance >= 1000){
       this.playerGetFree(this.CPUPlayer);
     } else {
       this.rollDice(this.CPUPlayer);
       position = this.CPUPlayer.position;
       property = this.properties.get(position);
       if(this.CPUPlayer.balance < 0){
+        while(this.CPUPlayer.getFirstPropertyHouseRemovable() != undefined)
+          this.removeHouse(this.CPUPlayer.getFirstPropertyHouseRemovable())
+      }
+      if(this.CPUPlayer.balance < 0){
         while(this.CPUPlayer.getFirstPropertyMortgageable() != undefined)
           this.mortgageProperty(this.CPUPlayer.getFirstPropertyMortgageable())
-          this.CPUProposeDealBankruptcy();
       }
+      
+        
+      if(this.CPUPlayer.balance < 0) this.CPUProposeDealBankruptcy();
+
+
+      
     }
     if(property != undefined && this.CPUPlayer.canPlayerBuyProperty(property))
       this.buyProperty(this.CPUPlayer)
