@@ -17,8 +17,8 @@ export class Player {
     constructor(name, colour) {
         this.name = name;
         this.colour = colour;
-        this.balance = 300000;
-        if(name == "CPU Player") this.balance = 3000;
+        this.balance = 10000;
+        if(name == "CPU Player") this.balance = 300000;
         this.position = 0;
         this.nbAirports = 0;
         this.properties = new Array<Property>();

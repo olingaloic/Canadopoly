@@ -6,6 +6,7 @@ import { Property } from 'src/app/model/square';
 import { BoardComponent } from '../board/board.component';
 import { MatTableDataSource } from '@angular/material/table';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ChanceDialogComponent } from '../chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
 import { CpuDealDialogComponent } from '../cpu-deal-dialog/cpu-deal-dialog.component';
@@ -17,7 +18,7 @@ import { CpuDealDialogComponent } from '../cpu-deal-dialog/cpu-deal-dialog.compo
 })
 
 export class GameComponent implements OnInit {
-  constructor(public dialog: MatDialog) {}
+  constructor(private router: Router, public dialog: MatDialog) {}
 
   @ViewChild(BoardComponent)
   private boardComponent: BoardComponent;
@@ -28,6 +29,7 @@ export class GameComponent implements OnInit {
   diceValue: number;
   isCPUPropositionDialogOpened: boolean = false;
   properties: Map<number, Property>;
+  nbBankruptcyHelpRefusals = 0
   dataSource = new MatTableDataSource();
   events: Array<string>;
   displayedColumns =
@@ -85,6 +87,8 @@ export class GameComponent implements OnInit {
   }
 
   displayBuyPropertyButton(){
+    if(this.player.balance < 0)
+      return false;
     if(this.properties.get(this.player.position) == undefined)
       return false;
     if(this.properties.get(this.player.position).player != undefined)
@@ -96,7 +100,7 @@ export class GameComponent implements OnInit {
     return true;
   }
   displayRollDiceButton(){
-    return this.player.isPlayerTurn && !this.canHumanEndTurn;
+    return this.player.isPlayerTurn && !this.canHumanEndTurn && !(this.player.balance < 0);
   }
 
   setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
@@ -275,7 +279,7 @@ export class GameComponent implements OnInit {
       var randomNumber = this.generateRandomNumber(1, 4);
       if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
         this.player.negotiationProperties = this.getPropertiesCPUWants(property);
-        this.CPUPlayerProposeDeal(false);
+        this.CPUPlayerProposeDeal();
         break;
       }
     }
@@ -309,8 +313,14 @@ export class GameComponent implements OnInit {
         data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
       });
       var result = await dialogRef.afterClosed().toPromise();
-      if(!result && this.CPUPlayer.balance < 0)
+      if(!result && this.CPUPlayer.balance < 0){
         this.isCPUPropositionDialogOpened = false; 
+        this.nbBankruptcyHelpRefusals ++;
+      }
+      if(this.nbBankruptcyHelpRefusals == 3){
+        this.declareBankruptcy(this.CPUPlayer);
+        break;
+      }
     }
   }
 
@@ -338,16 +348,11 @@ export class GameComponent implements OnInit {
     });
     return propertiesValue;
   }
-  async CPUPlayerProposeDeal(isCPURisksBankruptcy){
-    if(isCPURisksBankruptcy){
-      this.player.cashOffer = - this.CPUPlayer.balance + 1000;
-      var CPUPlayerDealPropertiesValue = this.player.cashOffer;
-      this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.CPUPlayer.getDealableProperties(), CPUPlayerDealPropertiesValue);
-    } else {
-      var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
-      this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
-    }
-    this.isCPUPropositionDialogOpened = true;
+  async CPUPlayerProposeDeal(){
+   
+    var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
+    this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
+  
     const dialogRef = this.dialog.open(CpuDealDialogComponent, {
       width: '500px',
       height: '450px',
@@ -507,6 +512,10 @@ export class GameComponent implements OnInit {
     player.nbTurnsInJail = 0;
     player.balance -= 1000;
     this.canHumanEndTurn = true;
+  }
+
+  declareBankruptcy(player){
+    this.router.navigate(['gameOver']);
   }
   
 }

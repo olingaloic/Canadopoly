@@ -18,6 +18,7 @@ import { ChanceDialogComponent } from './components/chance-dialog/chance-dialog.
 import { PropertiesDialogComponent } from './components/properties-dialog/properties-dialog.component';
 import { ProposeDealDialogComponent } from './components/propose-deal-dialog/propose-deal-dialog.component';
 import { CpuDealDialogComponent } from './components/cpu-deal-dialog/cpu-deal-dialog.component';
+import { GameOverComponent } from './components/game-over/game-over.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { CpuDealDialogComponent } from './components/cpu-deal-dialog/cpu-deal-di
     ChanceDialogComponent,
     PropertiesDialogComponent,
     ProposeDealDialogComponent,
-    CpuDealDialogComponent
+    CpuDealDialogComponent,
+    GameOverComponent
   ],
   imports: [
     BrowserModule,

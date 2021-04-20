@@ -65,14 +65,19 @@ export class ProposeDealDialogComponent implements OnInit {
   proposeDeal(){
     this.humanPlayer.negotiationProperties = new Array();
     this.CPUPlayer.negotiationProperties = new Array();
-    this.playerProperties.value.forEach((propertyName: String) => {
-      let property: Property = this.humanPlayer.getPropertyByName(propertyName);
-      this.humanPlayer.negotiationProperties.push(property);
-    });
-    this.CPUProperties.value.forEach((propertyName: String) => {
-      let property: Property = this.CPUPlayer.getPropertyByName(propertyName);
-      this.CPUPlayer.negotiationProperties.push(property);
-    });
+    if(this.playerProperties.value != null){
+      this.playerProperties.value.forEach((propertyName: String) => {
+        let property: Property = this.humanPlayer.getPropertyByName(propertyName);
+        this.humanPlayer.negotiationProperties.push(property);
+      });
+    }
+    if(this.CPUProperties.value){
+      this.CPUProperties.value.forEach((propertyName: String) => {
+        let property: Property = this.CPUPlayer.getPropertyByName(propertyName);
+        this.CPUPlayer.negotiationProperties.push(property);
+      });
+    }
+   
     this.CPUDealFunction();
   }
 

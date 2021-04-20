@@ -182,9 +182,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
         break;
       default:
         dice.src = "assets/img/one.png";
-
     }
-
   }
 }
 
