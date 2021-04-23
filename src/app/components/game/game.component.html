@@ -75,12 +75,20 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
             </table>
           </div> 
-          <p >CPU balance : $ {{CPUPlayer.balance}}</p>
-          <p *ngIf="CPUPlayer.nbTurnsInJail > 0">Turns in jail player : {{CPUPlayer.nbTurnsInJail}}</p>
-          <button mat-button color="primary" (click)="seeProperties(CPUPlayer)" >CPU properties</button>
-          <mat-nav-list style="overflow: auto; font-size: 10px;">
-            <mat-list-item *ngFor="let event of events"> {{ event }} </mat-list-item>
-         </mat-nav-list>
+          <div>
+            <p style="display: inline;">CPU balance : $ {{CPUPlayer.balance}}</p>
+            <p *ngIf="CPUPlayer.nbTurnsInJail > 0" style="display: inline; margin-left: 10px;">Turns in jail player : {{CPUPlayer.nbTurnsInJail}}</p>
+            <button mat-button color="primary" (click)="seeProperties(CPUPlayer)" >CPU properties</button>
+          </div>
+          
+         <table mat-table [dataSource]="dataSourceEvents">
+          <ng-container matColumnDef="event" sticky>
+            <th mat-header-cell *matHeaderCellDef>Events</th>
+            <td mat-cell *matCellDef="let event"> {{event}} </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsEvents"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsEvents;"></tr>           
+        </table>
 
 
            

@@ -1,22 +1,32 @@
-    <table mat-table [dataSource]="dataSourcePlayer" style="float:left">
-      <ng-container matColumnDef="name" sticky>
-        <th mat-header-cell *matHeaderCellDef>You give : </th>
-        <td mat-cell *matCellDef="let property"> {{property.name}} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
-    </table>
-    <p>${{humanPlayer.cashOffer}}</p>
-    <table mat-table [dataSource]="dataSourceCPU" style="display: inline-block">
-      <ng-container matColumnDef="name" sticky>
-        <th mat-header-cell *matHeaderCellDef>They give : </th>
-        <td mat-cell *matCellDef="let property"> {{property.name}} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
-    </table>
-    <p>${{CPUPlayer.cashOffer}}</p>
-    <button mat-button color="primary" (click)="acceptDeal()" >Accept</button>
-    <button mat-button color="primary" (click)="refuseDeal()" >Refuse</button>
+<h5>CPU Player has an offer for you</h5>
+    <div style="float:left">
+      <table mat-table [dataSource]="dataSourcePlayer">
+        <ng-container matColumnDef="name" sticky>
+          <th mat-header-cell *matHeaderCellDef style="font-size: 16px; font-weight: bold;">You give : </th>
+          <td mat-cell *matCellDef="let property"> {{property.name}} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
+      </table>
+    </div>
+    <div style="display: inline-block">
+      <table mat-table [dataSource]="dataSourceCPU">
+        <ng-container matColumnDef="name" sticky>
+          <th mat-header-cell *matHeaderCellDef style="font-size: 16px; font-weight: bold;">They give : </th>
+          <td mat-cell *matCellDef="let property"> {{property.name}} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
+      </table>
+    </div>
+    <div>
+      <p style="display: inline">+ ${{humanPlayer.cashOffer}}</p>
+      <p style="display: inline; margin-left: 100px;"> + ${{CPUPlayer.cashOffer}}</p>
+    </div>   
+    <div>
+      <button mat-button color="primary" (click)="acceptDeal()" >Accept</button>
+      <button mat-button color="primary" (click)="refuseDeal()" >Refuse</button>
+    </div>
+    
 
 

@@ -31,9 +31,12 @@ export class GameComponent implements OnInit {
   properties: Map<number, Property>;
   nbBankruptcyHelpRefusals = 0
   dataSource = new MatTableDataSource();
+  dataSourceEvents = new MatTableDataSource();
   events: Array<string>;
   displayedColumns =
       ['name', 'nbHouses', 'rentPrice', 'buyHouse', 'removeHouse', 'mortgage', 'removeMortgage'];
+  displayedColumnsEvents =
+      ['event'];
 
 
 
@@ -82,7 +85,7 @@ export class GameComponent implements OnInit {
     } else {
       player.nbAirports++;
     }
-    this.events.unshift(player.name + " has bought " + property.name + ".");
+    this.updateEventTableRendering(player.name + " has bought " + property.name + ".");
     this.updatePropertiesTableRendering();
   }
 
@@ -193,7 +196,7 @@ export class GameComponent implements OnInit {
     citiesOfTheSameTier.forEach((city: City) => {
       city.isMortgageable = false;
     });
-
+    if(player.name == "Human Player") this.updateEventTableRendering("Human Player has bought a house in " + city.name + " for $" + city.housePrice + ".");
     this.updatePropertiesTableRendering();
     
   }
@@ -227,14 +230,18 @@ export class GameComponent implements OnInit {
           player.balance -= 5000;
       }, 400);
     }
-    property = this.properties.get(player.position);
-    if(property != undefined && player.mustPayRent(property)){
-      console.log(property.getCurrentRentPrice())
-      player.balance -= property.getCurrentRentPrice();
-      property.player.balance += property.getCurrentRentPrice();
-    }
+    this.payRent(player);
     if(player.name == "Human Player")
       this.canHumanEndTurn = true;
+  }
+
+  payRent(player: Player){
+    let property = this.properties.get(player.position);
+    if(property != undefined && player.mustPayRent(property)){
+      player.balance -= property.getCurrentRentPrice();
+      property.player.balance += property.getCurrentRentPrice();
+      this.updateEventTableRendering(player.name + " paid a $" + property.getCurrentRentPrice() + " rent to stay in " + property.name + ".");
+    }
   }
 
   displayGetFreeButton(){
@@ -286,10 +293,12 @@ export class GameComponent implements OnInit {
     this.CPUPlayer.properties.forEach((property: Property) => {
       if(property.isCity()){
         let city = property as City;
+        let nbHousesBuilt = 0;
         while(city.isHouseBuyable){
           this.buyHouse(this.CPUPlayer, city);
-          alert("Herr CPU Player bought a new house in : " + city.name);
+          nbHousesBuilt++;
         }
+        if (nbHousesBuilt > 0) this.updateEventTableRendering("CPU Player has bought " + nbHousesBuilt + " house(s) in " + city.name + " for $" + city.housePrice * nbHousesBuilt + ".");
           
 
       }
@@ -354,8 +363,8 @@ export class GameComponent implements OnInit {
     this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
   
     const dialogRef = this.dialog.open(CpuDealDialogComponent, {
-      width: '500px',
-      height: '450px',
+      width: '375px',
+      height: '350px',
       data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
     });
 
@@ -408,7 +417,7 @@ export class GameComponent implements OnInit {
     var chanceEventMessage;
     switch(chanceEventNumber) {
       case 1:
-        chanceEventMessage = "Go to the next airport.";
+        chanceEventMessage = "Go to the next airport.";''
         this.movePlayerToNextAirport(player);
         break;
       case 2:
@@ -442,10 +451,12 @@ export class GameComponent implements OnInit {
       case 12:
         player.position = 18;
         this.boardComponent.renderMovePawn(player);
+        this.payRent(player);
         break;
       case 20:
         player.position = 25;
         this.boardComponent.renderMovePawn(player);
+        this.payRent(player);
         break;
     }
     
@@ -480,6 +491,11 @@ export class GameComponent implements OnInit {
 
   updatePropertiesTableRendering(){
     this.dataSource.data = this.player.getPropertiesSorted();
+  }
+
+  updateEventTableRendering(event: string){
+    this.events.unshift(event);
+    this.dataSourceEvents.data = this.events;
   }
 
   openChanceDialog(player: Player, chanceEventMessage: string): void {

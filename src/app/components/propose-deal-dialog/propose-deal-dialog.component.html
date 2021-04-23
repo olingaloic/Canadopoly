@@ -4,7 +4,7 @@
         <mat-select [formControl]="playerProperties" multiple>
             <mat-select-trigger>
                 {{playerProperties.value ? playerProperties.value[0] : ''}}
-                <span *ngIf="playerProperties.value?.length > 1" class="example-additional-selection">
+                <span *ngIf="playerProperties.value?.length > 1">
                   (+{{playerProperties.value.length - 1}} {{playerProperties.value?.length === 2 ? 'other' : 'others'}})
                 </span>
               </mat-select-trigger>
