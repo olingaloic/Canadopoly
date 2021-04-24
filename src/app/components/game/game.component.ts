@@ -215,20 +215,18 @@ export class GameComponent implements OnInit {
       player.nbTurnsInJail = (this.diceValue == 6) ? 0 : player.nbTurnsInJail - 1;
     }
     else {
-      for (let i = 0; i < this.diceValue; i++){
+      for (let i = 0; i < 2; i++){
         this.movePlayer(player);
       }
-      setTimeout(()=>{
-        if(player.position == 22){
-          this.movePlayerToJail(player);
-          player.nbTurnsInJail = 3;
-          this.openChanceDialog(player, "Go to Jail !");
-        }
-        if(player.position == 12 || player.position == 20)
-          this.generateRandomChanceEvent(player);
-        if(player.position == 2)
-          player.balance -= 5000;
-      }, 400);
+      if(player.position == 22){
+        this.movePlayerToJail(player);
+        player.nbTurnsInJail = 3;
+        this.openChanceDialog(player, "Go to Jail !");
+      }
+      if(player.position == 12 || player.position == 20)
+        this.generateRandomChanceEvent(player);
+      if(player.position == 2)
+        player.balance -= 5000;
     }
     this.payRent(player);
     if(player.name == "Human Player")
@@ -273,7 +271,7 @@ export class GameComponent implements OnInit {
           this.mortgageProperty(this.CPUPlayer.getFirstPropertyMortgageable())
       }
       
-        
+      console.log(this.CPUPlayer.balance);
       if(this.CPUPlayer.balance < 0) this.CPUProposeDealBankruptcy();
 
 

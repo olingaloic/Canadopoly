@@ -3,7 +3,9 @@
     <div class="row">
       <board class="board"></board>
       <div class="right-side">
-        <p style="text-align: center;">Your balance : ${{player.balance}}</p>
+        <div>        
+          <p style="text-align: center; display: inline;">Your balance : </p><p style="display: inline-block;" [style.color]="player.balance < 0 ? 'red' : null">${{player.balance}}</p>
+        </div>
         <button mat-button *ngIf="displayRollDiceButton()" color="primary" (click)="rollDice(player)" >Roll dice !</button>
         <button mat-button *ngIf="displayBuyPropertyButton()" (click)="buyProperty(player)">Buy property !</button>
         <button mat-button *ngIf="canHumanEndTurn && !(player.balance < 0)" (click)="endTurn(player)">End turn</button>
@@ -76,7 +78,9 @@
             </table>
           </div> 
           <div>
-            <p style="display: inline;">CPU balance : $ {{CPUPlayer.balance}}</p>
+            <div>        
+              <p style="text-align: center; display: inline;">CPU balance : </p><p style="display: inline-block;" [style.color]="CPUPlayer.balance < 0 ? 'red' : null">${{CPUPlayer.balance}}</p>
+            </div>
             <p *ngIf="CPUPlayer.nbTurnsInJail > 0" style="display: inline; margin-left: 10px;">Turns in jail player : {{CPUPlayer.nbTurnsInJail}}</p>
             <button mat-button color="primary" (click)="seeProperties(CPUPlayer)" >CPU properties</button>
           </div>
