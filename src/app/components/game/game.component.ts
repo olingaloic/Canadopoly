@@ -34,7 +34,7 @@ export class GameComponent implements OnInit {
   dataSourceEvents = new MatTableDataSource();
   events: Array<string>;
   displayedColumns =
-      ['name', 'nbHouses', 'rentPrice', 'buyHouse', 'removeHouse', 'mortgage', 'removeMortgage'];
+      ['tier', 'name', 'nbHouses', 'rentPrice', 'buyHouse', 'removeHouse', 'mortgage', 'removeMortgage'];
   displayedColumnsEvents =
       ['event'];
 
@@ -171,7 +171,8 @@ export class GameComponent implements OnInit {
       let city = property as City;
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
       this.setHousesBuyable(citiesOfTheSameTier, player);
-    } 
+    }
+    this.updateEventTableRendering(property.player.name + " paid off the mortgage on " + property.name + " for $" + property.propertyPrice/2);
     this.updatePropertiesTableRendering();
 
     
@@ -186,6 +187,7 @@ export class GameComponent implements OnInit {
     this.setPropertiesMorgageable(citiesOfTheSameTier);
     this.setHousesBuyable(citiesOfTheSameTier, player);
     this.updatePropertiesTableRendering();
+    this.updateEventTableRendering(player.name + " removed a house in " + city.name + " and got $" + city.housePrice/2 + ".");
   }
 
   buyHouse(player: Player, city: City){
@@ -207,15 +209,21 @@ export class GameComponent implements OnInit {
   }
 
   rollDice(player: Player){
-    var property : Property;
     this.diceValue = this.generateRandomNumber(1, 6);
     this.boardComponent.renderDiceValue(this.diceValue);
+
+    if(player.name == "Human Player") {
+      this.diceValue = 3;
+    } else {
+      this.diceValue = 1;
+    }
     
     if(player.nbTurnsInJail > 0){
       player.nbTurnsInJail = (this.diceValue == 6) ? 0 : player.nbTurnsInJail - 1;
+      this.updateEventTableRendering(player.name + " is now free.");
     }
     else {
-      for (let i = 0; i < 2; i++){
+      for (let i = 0; i < this.diceValue; i++){
         this.movePlayer(player);
       }
       if(player.position == 22){
@@ -225,8 +233,10 @@ export class GameComponent implements OnInit {
       }
       if(player.position == 12 || player.position == 20)
         this.generateRandomChanceEvent(player);
-      if(player.position == 2)
+      if(player.position == 2){
         player.balance -= 5000;
+        this.updateEventTableRendering(player.name + "paid $5000 for local tax.");
+      }
     }
     this.payRent(player);
     if(player.name == "Human Player")
@@ -281,7 +291,7 @@ export class GameComponent implements OnInit {
       this.buyProperty(this.CPUPlayer)
 
     for(let property of this.CPUPlayer.getDealableProperties()){
-      var randomNumber = this.generateRandomNumber(1, 4);
+      var randomNumber = this.generateRandomNumber(1, 1);
       if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
         this.player.negotiationProperties = this.getPropertiesCPUWants(property);
         this.CPUPlayerProposeDeal();
@@ -394,6 +404,7 @@ export class GameComponent implements OnInit {
   movePlayerToJail(player: Player){
     player.position = 8;
     player.nbTurnsInJail = 3;
+    this.updateEventTableRendering(player.name + " has been sent to jail.");
     this.boardComponent.renderMovePawn(player);
     
   }
@@ -411,7 +422,6 @@ export class GameComponent implements OnInit {
   }
   generateRandomChanceEvent(player: Player) {
     var chanceEventNumber = this.generateRandomNumber(1, 5);
-    //chanceEventNumber = 4;
     var chanceEventMessage;
     switch(chanceEventNumber) {
       case 1:
@@ -421,10 +431,12 @@ export class GameComponent implements OnInit {
       case 2:
         chanceEventMessage = "You spent $2000 during holidays.";
         player.balance -= 2000;
+        this.updateEventTableRendering(player.name + " spent $2000 during holidays.");
         break;
       case 3:
         chanceEventMessage = "You won $2500 at the lottery.";
         player.balance += 3000;
+        this.updateEventTableRendering(player.name + " won $2500 at the lottery.");
         break;
       case 4:
         this.playerPayHousesRepairments(player);
@@ -441,8 +453,10 @@ export class GameComponent implements OnInit {
 
   }
   playerPayHousesRepairments(player: Player) {
-    var numberPlayerHouses: number = player.getNumberOfHouses();
-    player.balance -= (numberPlayerHouses * 500);
+    let numberPlayerHouses: number = player.getNumberOfHouses();
+    let housesRepairmentsPrice = numberPlayerHouses * 500;
+    player.balance -= (housesRepairmentsPrice);
+    this.updateEventTableRendering(player.name + " paid $" + housesRepairmentsPrice + " for houses repairments.");
   }
   movePlayerToNextAirport(player: Player) {
     switch(player.position){
@@ -470,9 +484,10 @@ export class GameComponent implements OnInit {
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
       citiesOfTheSameTier.forEach((city: City) => {
         city.isHouseBuyable = false;
-        console.log(city)
       });
     }
+    this.updateEventTableRendering(property.player.name + " mortgaged " + property.name + " and got $" + property.propertyPrice/2 + " from it.");
+
     this.updatePropertiesTableRendering();
 
   }
@@ -525,6 +540,7 @@ export class GameComponent implements OnInit {
   playerGetFree(player) {
     player.nbTurnsInJail = 0;
     player.balance -= 1000;
+    this.updateEventTableRendering(player.name + " paid $1000 to get free.");
     this.canHumanEndTurn = true;
   }
 

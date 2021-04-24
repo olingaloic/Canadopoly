@@ -23,7 +23,7 @@ export class PropertiesDialogComponent implements OnInit {
   boardComponent: BoardComponent;
   dataSource = new MatTableDataSource();
   displayedColumns =
-      ['name', 'nbHouses', 'propertyPrice', 'rentPrice'];
+      ['tier', 'name', 'nbHouses', 'propertyPrice', 'rentPrice'];
   constructor(
     public dialogRef: MatDialogRef<PropertiesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PropertiesDialogData, public dialog: MatDialog) {}

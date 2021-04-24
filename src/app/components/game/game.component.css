@@ -19,3 +19,13 @@ table {
 .success {
     color: green;
 }
+
+.tiersquare {
+    width: 14px;
+    height: 14px;
+}
+
+img {
+    width: 14px;
+    height: 14px;
+}

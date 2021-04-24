@@ -1,19 +1,37 @@
 <div class="table-container">
 
     <table mat-table [dataSource]="dataSource"  *ngIf="CPUPlayer.properties.length != 0; else noProperties">
-      <ng-container matColumnDef="name" sticky>
+      <ng-container matColumnDef="tier" sticky>
+        <th mat-header-cell *matHeaderCellDef>Tier</th>
+        <td mat-cell *matCellDef="let property">
+          <div style="background-color: violet;" class="tiersquare" *ngIf="property.tier == 'Tier 1' "></div>
+          <div style="background-color: cornflowerblue;" class="tiersquare" *ngIf="property.tier == 'Tier 2' "></div>
+          <div style="background-color: blue;" class="tiersquare" *ngIf="property.tier == 'Tier 3' "></div>
+          <div style="background-color: green;" class="tiersquare" *ngIf="property.tier == 'Tier 4' "></div>
+          <div style="background-color: palevioletred;" class="tiersquare" *ngIf="property.tier == 'Tier 5' "></div>
+          <div style="background-color: yellow;" class="tiersquare" *ngIf="property.tier == 'Tier 6' "></div>
+          <div style="background-color: orange;" class="tiersquare" *ngIf="property.tier == 'Tier 7' "></div>
+          <div style="background-color: red;" class="tiersquare" *ngIf="property.tier == 'Tier 8' "></div>
+          <div *ngIf="!property.isCity() "><img src="assets/img/airplane.png"/></div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Property</th>
         <td mat-cell *matCellDef="let property"> {{property.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="nbHouses" >
         <th mat-header-cell *matHeaderCellDef> Houses </th>
-        <td mat-cell *matCellDef="let property"> {{property.nbHouses}} </td>
+        <ng-container *matCellDef="let property">
+          <td mat-cell *ngIf="property.isCity()">{{property.nbHouses}}</td>
+          <td mat-cell *ngIf="!property.isCity()">-</td>
+        </ng-container>
       </ng-container>
+      <ng-template #isAirport>-</ng-template>
 
       <ng-container matColumnDef="propertyPrice" >
         <th mat-header-cell *matHeaderCellDef> Property Price </th>
-        <td mat-cell *matCellDef="let property"> {{property.propertyPrice}} </td>
+        <td mat-cell *matCellDef="let property">${{property.propertyPrice}} </td>
       </ng-container>
       
       <ng-container matColumnDef="rentPrice">
@@ -28,6 +46,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <button mat-button (click)="openDealDialog()">Propose Deal</button>
-    <ng-template #noProperties>{{CPUPlayer.name}} doesn't have any property yet.</ng-template>
+    <ng-template #noProperties><div><p>{{CPUPlayer.name}} doesn't have any property yet.</p></div></ng-template>
     <button mat-button mat-dialog-close>Close</button>
   </div> 
