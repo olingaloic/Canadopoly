@@ -34,7 +34,10 @@
               </ng-container>
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Property</th>
-                <td mat-cell *matCellDef="let property"> {{property.name}} </td>
+                <button></button>
+                <td mat-cell *matCellDef="let property">
+                  <button mat-button (click)="openPropertyCardDialog(property)">{{property.name}}</button>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="nbHouses" >
@@ -49,7 +52,7 @@
               <ng-container matColumnDef="rentPrice">
                 <th mat-header-cell *matHeaderCellDef>Rent Price</th>
                 <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf="property.isCity()">${{property.rentPrices[property.nbHouses]}}</td>
+                  <td mat-cell *ngIf="property.isCity()">${{property.getCurrentRentPrice()}}</td>
                   <td mat-cell *ngIf="!property.isCity()">${{property.rentPrices[player.nbAirports]}}</td>
                   <td mat-cell *ngIf="property.isMortgaged">(Mortgaged)</td>
                 </ng-container>

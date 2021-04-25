@@ -1,0 +1,16 @@
+.tierband {
+    height: 15%;
+    width: 100%;
+}
+
+p { 
+    text-align: center;
+    font-size: 14px;
+}
+
+img {
+    height: 45px;
+    width: 45px;
+    text-align: center;
+    margin-left: 100px;
+}

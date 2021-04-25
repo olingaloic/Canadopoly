@@ -23,12 +23,14 @@ export abstract class Property extends Square{
         this.propertyPrice = propertyPrice;
         this.rentPrices = rentPrices;
         this.mortgageValue = propertyPrice/2;
-
     }
 
     isCity(){
         return this.desc == "C";
     }
     
+    getNameToUpperCase(){
+        return this.name.toLocaleUpperCase();
+    }
     abstract getCurrentRentPrice();
 }

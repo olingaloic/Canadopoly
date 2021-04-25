@@ -19,6 +19,7 @@ import { PropertiesDialogComponent } from './components/properties-dialog/proper
 import { ProposeDealDialogComponent } from './components/propose-deal-dialog/propose-deal-dialog.component';
 import { CpuDealDialogComponent } from './components/cpu-deal-dialog/cpu-deal-dialog.component';
 import { GameOverComponent } from './components/game-over/game-over.component';
+import { PropertyCardDialogComponent } from './components/property-card-dialog/property-card-dialog.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { GameOverComponent } from './components/game-over/game-over.component';
     PropertiesDialogComponent,
     ProposeDealDialogComponent,
     CpuDealDialogComponent,
-    GameOverComponent
+    GameOverComponent,
+    PropertyCardDialogComponent
   ],
   imports: [
     BrowserModule,

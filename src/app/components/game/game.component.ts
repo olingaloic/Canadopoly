@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { ChanceDialogComponent } from '../chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from '../properties-dialog/properties-dialog.component';
 import { CpuDealDialogComponent } from '../cpu-deal-dialog/cpu-deal-dialog.component';
+import { PropertyCardDialogComponent } from '../property-card-dialog/property-card-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -108,12 +109,15 @@ export class GameComponent implements OnInit {
 
   setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
     var areHousesBuyable: boolean = true;
+    var isZeroHouseLot: boolean = true;
+
     citiesOfTheSameTier.forEach((city: City) => {
-      if(city.player != player || city.isMortgaged)
-      areHousesBuyable = false;
+      if(city.player != player || city.isMortgaged) areHousesBuyable = false;
+      if(city.player != player || city.nbHouses > 0 || city.isMortgaged) isZeroHouseLot = false;
     });
     
     citiesOfTheSameTier.forEach((city: City) => {
+      if(isZeroHouseLot) city.currentRentPrice = city.rentPrices[0] * 2;
       if(player.balance < city.housePrice || city.nbHouses == 5){
         city.isHouseBuyable = false;
       }
@@ -170,8 +174,10 @@ export class GameComponent implements OnInit {
     if(property.isCity()){
       let city = property as City;
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
+      city.currentRentPrice = city.rentPrices[0];
       this.setHousesBuyable(citiesOfTheSameTier, player);
     }
+    
     this.updateEventTableRendering(property.player.name + " paid off the mortgage on " + property.name + " for $" + property.propertyPrice/2);
     this.updatePropertiesTableRendering();
 
@@ -181,7 +187,7 @@ export class GameComponent implements OnInit {
   removeHouse(property: Property){
     let city = property as City;
     let player = city.player;
-    city.nbHouses--;
+    city.currentRentPrice = city.rentPrices[--city.nbHouses];
     player.balance += city.housePrice/2;
     let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
     this.setPropertiesMorgageable(citiesOfTheSameTier);
@@ -192,7 +198,7 @@ export class GameComponent implements OnInit {
 
   buyHouse(player: Player, city: City){
     player.balance -= city.housePrice;
-    city.nbHouses++;
+    city.currentRentPrice = city.rentPrices[++city.nbHouses];
     let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
     this.setHousesBuyable(citiesOfTheSameTier, player);
     citiesOfTheSameTier.forEach((city: City) => {
@@ -388,7 +394,7 @@ export class GameComponent implements OnInit {
       if(property.isCity()){
         let city = property as City;
         let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
-          this.setHousesBuyable(citiesOfTheSameTier, this.player);
+        this.setHousesBuyable(citiesOfTheSameTier, this.player);
       }
     });
 
@@ -484,6 +490,11 @@ export class GameComponent implements OnInit {
       let citiesOfTheSameTier = this.getCitiesOfTheSameTier(city);
       citiesOfTheSameTier.forEach((city: City) => {
         city.isHouseBuyable = false;
+        if(city.isMortgaged){
+          city.currentRentPrice = 0;
+        } else {
+          city.currentRentPrice = city.rentPrices[0];
+        }
       });
     }
     this.updateEventTableRendering(property.player.name + " mortgaged " + property.name + " and got $" + property.propertyPrice/2 + " from it.");
@@ -520,6 +531,14 @@ export class GameComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+    });
+  }
+
+  openPropertyCardDialog(property: Property){
+    const dialogRef = this.dialog.open(PropertyCardDialogComponent, {
+      width: '300px',
+      height: '350px',
+      data: {property: property}
     });
   }
 

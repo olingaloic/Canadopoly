@@ -1,0 +1,60 @@
+<div style="border: 1.5px solid grey; height: 100%;" *ngIf="property.isCity()">
+    <div style="background-color: red; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 8'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: orange;" class="tierband"  *ngIf="city.tier == 'Tier 7'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: yellow;" class="tierband"  *ngIf="city.tier == 'Tier 6'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: palevioletred; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 5'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: green; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 4'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: blue; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 3'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: cornflowerblue; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 2'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div style="background-color: violet; color: white;" class="tierband"  *ngIf="city.tier == 'Tier 1'">
+        <p style="font-size: x-small; letter-spacing: 3px; margin-bottom: 5px">TITLE DEED</p>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+    </div>
+    <div>
+        <p style="margin-bottom: 0px;">RENT ${{property.rentPrices[0]}}.</p>
+        <p style="margin-bottom: 0px;">With 1 House ${{property.rentPrices[1]}}.</p>
+        <p style="margin-bottom: 0px;">With 2 Houses ${{property.rentPrices[2]}}.</p>
+        <p style="margin-bottom: 0px;">With 3 Houses ${{property.rentPrices[3]}}.</p>
+        <p style="margin-bottom: 10px;">With 4 Houses ${{property.rentPrices[4]}}.</p>
+        <p style="margin-bottom: 0px;">With HOTEL ${{property.rentPrices[5]}}.</p>
+        <p style="margin-bottom: 0px;">Mortgage Value ${{property.propertyPrice/2}}.</p>
+        <p style="margin-bottom: 0px;">Houses cost ${{property.housePrice}}.</p>
+        <p style="margin-bottom: 25px;">Hotels, ${{property.housePrice}}. plus 4 Houses</p>
+        <p style="font-size: 9px;">If a player owns ALL the properties of a colour group, the rent is now doubled on all unimproved lots of that color group.</p>
+    </div>  
+</div>
+<div *ngIf="!property.isCity()">
+    <div>
+        <img src="assets/img/airplane_card.png"/>
+        <hr>
+        <p style="font-weight: bold;">{{property.getNameToUpperCase()}}</p>
+        <hr>
+        <p>Rent ${{property.rentPrices[1]}}</p>
+        <p>If 2 airports are owned ${{property.rentPrices[2]}}.</p>
+        <p>If 3 airports are owned ${{property.rentPrices[3]}}.</p>
+        <p>If 4 airports are owned ${{property.rentPrices[4]}}.</p>
+        <p style="margin-bottom: 0px;">Mortgage Value $2500.</p>
+    </div>
+</div>  
+
