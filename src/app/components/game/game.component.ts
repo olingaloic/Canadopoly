@@ -35,7 +35,7 @@ export class GameComponent implements OnInit {
   dataSourceEvents = new MatTableDataSource();
   events: Array<string>;
   displayedColumns =
-      ['tier', 'name', 'nbHouses', 'rentPrice', 'buyHouse', 'removeHouse', 'mortgage', 'removeMortgage'];
+      ['tier', 'name', 'nbHouses', 'rentPrice', 'buttons'];
   displayedColumnsEvents =
       ['event'];
 
@@ -218,11 +218,13 @@ export class GameComponent implements OnInit {
     this.diceValue = this.generateRandomNumber(1, 6);
     this.boardComponent.renderDiceValue(this.diceValue);
 
+    /*
     if(player.name == "Human Player") {
       this.diceValue = 3;
     } else {
       this.diceValue = 1;
     }
+    */
     
     if(player.nbTurnsInJail > 0){
       player.nbTurnsInJail = (this.diceValue == 6) ? 0 : player.nbTurnsInJail - 1;
@@ -241,7 +243,7 @@ export class GameComponent implements OnInit {
         this.generateRandomChanceEvent(player);
       if(player.position == 2){
         player.balance -= 5000;
-        this.updateEventTableRendering(player.name + "paid $5000 for local tax.");
+        this.updateEventTableRendering(player.name + " paid $5000 for local tax.");
       }
     }
     this.payRent(player);
@@ -297,7 +299,7 @@ export class GameComponent implements OnInit {
       this.buyProperty(this.CPUPlayer)
 
     for(let property of this.CPUPlayer.getDealableProperties()){
-      var randomNumber = this.generateRandomNumber(1, 1);
+      var randomNumber = this.generateRandomNumber(1, 4);
       if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
         this.player.negotiationProperties = this.getPropertiesCPUWants(property);
         this.CPUPlayerProposeDeal();

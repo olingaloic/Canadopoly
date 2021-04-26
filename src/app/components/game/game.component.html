@@ -18,7 +18,7 @@
 
             <table mat-table [dataSource]="dataSource" style="font-size: 8px;" *ngIf="player.properties.length != 0">
               <ng-container matColumnDef="tier" sticky>
-                <th mat-header-cell *matHeaderCellDef>Tier</th>
+                <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let property">
                   <div style="background-color: violet;" class="tiersquare" *ngIf="property.tier == 'Tier 1' "></div>
                   <div style="background-color: cornflowerblue;" class="tiersquare" *ngIf="property.tier == 'Tier 2' "></div>
@@ -29,14 +29,13 @@
                   <div style="background-color: orange;" class="tiersquare" *ngIf="property.tier == 'Tier 7' "></div>
                   <div style="background-color: red;" class="tiersquare" *ngIf="property.tier == 'Tier 8' "></div>
                   <div *ngIf="!property.isCity() "><img src="assets/img/airplane.png"/></div>
-
                 </td>
               </ng-container>
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Property</th>
                 <button></button>
                 <td mat-cell *matCellDef="let property">
-                  <button mat-button (click)="openPropertyCardDialog(property)">{{property.name}}</button>
+                  <button mat-button (click)="openPropertyCardDialog(property)" style="font-size: 11px;">{{property.name}}</button>
                 </td>
               </ng-container>
 
@@ -52,45 +51,27 @@
               <ng-container matColumnDef="rentPrice">
                 <th mat-header-cell *matHeaderCellDef>Rent Price</th>
                 <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf="property.isCity()">${{property.getCurrentRentPrice()}}</td>
-                  <td mat-cell *ngIf="!property.isCity()">${{property.rentPrices[player.nbAirports]}}</td>
-                  <td mat-cell *ngIf="property.isMortgaged">(Mortgaged)</td>
+                  <td mat-cell *ngIf="property.isCity()" style="font-size: 11px;">${{property.getCurrentRentPrice()}}</td>
+                  <td mat-cell *ngIf="!property.isCity()" style="font-size: 11px;">${{property.rentPrices[player.nbAirports]}}</td>
+                  <td mat-cell *ngIf="property.isMortgaged" style="font-size: 11px;">(Mortgaged)</td>
                 </ng-container>
                 
               </ng-container>
 
 
-              <ng-container matColumnDef="buyHouse" >
+              <ng-container matColumnDef="buttons" >
                 <th mat-header-cell *matHeaderCellDef></th>
                 <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf=(property.isHouseBuyable)><button mat-mini-fab color="success" class="success" (click)="buyHouse(player, property)" ><span class="material-icons">home</span>
-                  </button></td>
+                  <td mat-cell>
+                    <button mat-mini-fab color="success" class="success" (click)="buyHouse(player, property)" *ngIf=(property.isHouseBuyable) style="display: inline;"><span class="material-icons">home</span></button>
+                    <button mat-mini-fab color="warn" (click)="removeHouse(property)" *ngIf="property.nbHouses > 0" style="display: inline;"><span class="material-icons">home</span></button>
+                    <button mat-button color="warn" (click)="mortgageProperty(property)" *ngIf=(property.isMortgageable)>Mortgage</button>
+                    <button mat-button class="success" (click)="removeMortgage(property)" *ngIf=(property.canMortgageGetPaidOff())>Remove Mortgage</button>
+                  </td>
                 </ng-container>
               </ng-container>
 
-              <ng-container matColumnDef="removeHouse" >
-                <th mat-header-cell *matHeaderCellDef></th>
-                <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf="property.nbHouses > 0"><button mat-mini-fab color="warn" (click)="removeHouse(property)" ><span class="material-icons">home</span>
-                  </button></td>
-                </ng-container>
-              </ng-container>
-
-              <ng-container matColumnDef="mortgage" >
-                <th mat-header-cell *matHeaderCellDef></th>
-                <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf=(property.isMortgageable)><button mat-button color="warn" (click)="mortgageProperty(property)" >Mortgage
-                  </button></td>
-                </ng-container>
-              </ng-container>
-
-              <ng-container matColumnDef="removeMortgage" >
-                <th mat-header-cell *matHeaderCellDef></th>
-                <ng-container *matCellDef="let property">
-                  <td mat-cell *ngIf=(property.isMortgaged)><button mat-button class="success" (click)="removeMortgage(property)" >Remove
-                  </button></td>
-                </ng-container>
-              </ng-container>   
+              
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>           
             </table>

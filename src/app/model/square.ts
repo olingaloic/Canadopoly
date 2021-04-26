@@ -32,5 +32,9 @@ export abstract class Property extends Square{
     getNameToUpperCase(){
         return this.name.toLocaleUpperCase();
     }
+
+    canMortgageGetPaidOff(){
+        return this.isMortgaged && this.player.balance >= this.propertyPrice/2;
+    }
     abstract getCurrentRentPrice();
 }
