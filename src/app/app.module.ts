@@ -13,6 +13,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatListModule} from '@angular/material/list';
+import {MatCardModule} from '@angular/material/card';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ChanceDialogComponent } from './components/chance-dialog/chance-dialog.component';
 import { PropertiesDialogComponent } from './components/properties-dialog/properties-dialog.component';
@@ -46,7 +47,8 @@ import { PropertyCardDialogComponent } from './components/property-card-dialog/p
     ReactiveFormsModule,
     MatSelectModule,
     MatSliderModule,
-    MatListModule
+    MatListModule, 
+    MatCardModule
     
   ],
   exports: [

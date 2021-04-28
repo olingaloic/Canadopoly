@@ -45,10 +45,6 @@ export class ProposeDealDialogComponent implements OnInit {
     public proposeDealDialogRef: MatDialogRef<ProposeDealDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProposeDealDialogData) {}
 
-
-  onNoClick(): void {
-    this.proposeDealDialogRef.close();
-  }
   ngOnInit(): void {
     this.CPUPlayer = this.data.CPUPlayer;
     this.humanPlayer = this.data.humanPlayer;

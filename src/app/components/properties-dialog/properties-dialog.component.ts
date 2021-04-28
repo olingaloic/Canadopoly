@@ -46,6 +46,7 @@ export class PropertiesDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProposeDealDialogComponent, {
       width: '600px',
       height: '300px',
+      disableClose: true,
       data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer, boardComponent: this.boardComponent, propertiesDialogRef: this.dialogRef}
     });
 

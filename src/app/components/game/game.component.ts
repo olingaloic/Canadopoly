@@ -101,6 +101,8 @@ export class GameComponent implements OnInit {
       return false;
     if(!this.player.isPlayerTurn)
       return false;
+    if(this.displayRollDiceButton())
+      return false;
     return true;
   }
   displayRollDiceButton(){
@@ -299,7 +301,7 @@ export class GameComponent implements OnInit {
       this.buyProperty(this.CPUPlayer)
 
     for(let property of this.CPUPlayer.getDealableProperties()){
-      var randomNumber = this.generateRandomNumber(1, 4);
+      var randomNumber = this.generateRandomNumber(1, 1);
       if(this.getPropertiesCPUWants(property).length > 0 && randomNumber == 1){
         this.player.negotiationProperties = this.getPropertiesCPUWants(property);
         this.CPUPlayerProposeDeal();
@@ -335,6 +337,7 @@ export class GameComponent implements OnInit {
       const dialogRef = this.dialog.open(CpuDealDialogComponent, {
         width: '500px',
         height: '450px',
+        disableClose: true,
         data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
       });
       var result = await dialogRef.afterClosed().toPromise();
@@ -377,10 +380,16 @@ export class GameComponent implements OnInit {
    
     var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
     this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
-  
+    this.CPUPlayer.negotiationProperties = this.CPUPlayer.negotiationProperties.slice(0,2);
+    this.CPUPlayer.cashOffer = humanPlayerDealPropertiesValue - this.getPropertiesValue(this.CPUPlayer.negotiationProperties) + 1000;
+    if(this.CPUPlayer.cashOffer < 0){
+      this.player.cashOffer = -this.CPUPlayer.cashOffer;
+      this.CPUPlayer.cashOffer = 0;
+    } 
     const dialogRef = this.dialog.open(CpuDealDialogComponent, {
       width: '375px',
       height: '350px',
+      disableClose: true,
       data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
     });
 
@@ -548,6 +557,7 @@ export class GameComponent implements OnInit {
     const dialogRef = this.dialog.open(PropertiesDialogComponent, {
       width: '600px',
       height: '400px',
+      disableClose: true,
       data: {humanPlayer: this.player, CPUPlayer: player, boardComponent: this.boardComponent}
     });
 
@@ -565,8 +575,8 @@ export class GameComponent implements OnInit {
     this.canHumanEndTurn = true;
   }
 
-  declareBankruptcy(player){
-    this.router.navigate(['gameOver']);
+  declareBankruptcy(player: Player){
+    this.router.navigate(['gameOver', { playerName: player.name }]);
   }
   
 }
