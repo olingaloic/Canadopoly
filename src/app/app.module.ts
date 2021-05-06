@@ -49,7 +49,6 @@ import { PropertyCardDialogComponent } from './components/property-card-dialog/p
     MatSliderModule,
     MatListModule, 
     MatCardModule
-    
   ],
   exports: [
     

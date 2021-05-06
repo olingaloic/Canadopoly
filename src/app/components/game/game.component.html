@@ -53,9 +53,8 @@
                 <ng-container *matCellDef="let property">
                   <td mat-cell *ngIf="property.isCity()" style="white-space: nowrap; font-size: 11px;">${{property.getCurrentRentPrice()}}</td>
                   <td mat-cell *ngIf="!property.isCity()" style="white-space: nowrap; font-size: 11px;">${{property.rentPrices[player.nbAirports]}}</td>
-                  <td mat-cell *ngIf="property.isMortgaged" style="white-space: nowrap; font-size: 11px;">(Mortgaged)</td>
+                  <td mat-cell *ngIf="property.isMortgaged" style="white-space: nowrap; font-size: 11px; color: red;">(Mortgaged)</td>
                 </ng-container>
-                
               </ng-container>
 
 

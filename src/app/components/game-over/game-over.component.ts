@@ -13,11 +13,9 @@ export class GameOverComponent implements OnInit {
 
   ngOnInit(): void {
       this.playerName =  this.route.snapshot.paramMap.get('playerName');
-
   }
 
   playAgain(){
     this.router.navigate(['/']);
   }
-
 }

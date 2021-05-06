@@ -38,6 +38,7 @@ export class PropertiesDialogComponent implements OnInit {
     this.boardComponent = this.data.boardComponent;
     this.updatePropertiesTableRendering();
   }
+
   updatePropertiesTableRendering(){
     this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
   }
@@ -49,10 +50,5 @@ export class PropertiesDialogComponent implements OnInit {
       disableClose: true,
       data: {humanPlayer: this.humanPlayer, CPUPlayer: this.CPUPlayer, boardComponent: this.boardComponent, propertiesDialogRef: this.dialogRef}
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
   }
-
 }

@@ -1,8 +1,7 @@
-import { Inject, ViewChild } from '@angular/core';
+import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSliderChange } from '@angular/material/slider';
 import { Player } from 'src/app/model/player';
 import { Property } from 'src/app/model/square';
@@ -35,12 +34,8 @@ export class ProposeDealDialogComponent implements OnInit {
   boardComponent: BoardComponent;
   propertiesDialogRef: MatDialogRef<PropertiesDialogComponent>;
   dealService: DealService;
+  private readonly roundNumber = 100;
 
-  
-  /*
-  displayedColumns =
-      ['name', 'nbHouses', 'propertyPrice', 'rentPrice', 'deal'];
-  */
   constructor(
     public proposeDealDialogRef: MatDialogRef<ProposeDealDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProposeDealDialogData) {}
@@ -50,12 +45,11 @@ export class ProposeDealDialogComponent implements OnInit {
     this.humanPlayer = this.data.humanPlayer;
     this.boardComponent = this.data.boardComponent;
     this.propertiesDialogRef = this.data.propertiesDialogRef;
-    this.updatePropertiesTableRendering();
     this.dealService = new DealService(this.boardComponent);
-
   }
-  updatePropertiesTableRendering(){
-    //this.dataSource.data = this.CPUPlayer.getPropertiesSorted();
+
+  closeDialog(){
+    this.proposeDealDialogRef.close();
   }
 
   proposeDeal(){
@@ -73,23 +67,23 @@ export class ProposeDealDialogComponent implements OnInit {
         this.CPUPlayer.negotiationProperties.push(property);
       });
     }
-   
     this.CPUDealFunction();
   }
 
   formatLabel(value: number) {
-    value = Math.ceil(value/100)* 100 ;
+    let roundNumber: number = 100;
+    value = Math.ceil(value/roundNumber)*roundNumber ;
     return '$' + value;
   }
 
   changePlayerCashOffer(event: MatSliderChange){
-    var roundedValue = Math.ceil(event.value/100)* 100 ;
+    var roundedValue = Math.ceil(event.value/this.roundNumber)* this.roundNumber ;
     this.humanPlayer.cashOffer = roundedValue;
   
   }
 
   changeCPUCashOffer(event: MatSliderChange){
-    var roundedValue = Math.ceil(event.value/100)* 100 ;
+    var roundedValue = Math.ceil(event.value/this.roundNumber)* this.roundNumber ;
     this.CPUPlayer.cashOffer = roundedValue;
   }
 
@@ -112,16 +106,9 @@ export class ProposeDealDialogComponent implements OnInit {
       }
     });
     playerOfferValue += this.humanPlayer.cashOffer;
-    console.log("PLAYER OFFER : " + playerOfferValue)
-      console.log("CPU OFFER : " + CPUOfferValue)
     if(playerOfferValue > CPUOfferValue){
-      
-
-      //swap player properties + budget transfer + board component 
       this.dealService.doTransfer(this.humanPlayer, this.CPUPlayer);
-      console.log(this.proposeDealDialogRef)
       this.proposeDealDialogRef.close();
-      console.log(this.propertiesDialogRef)
       this.propertiesDialogRef.close();
     } else {
       this.unsatisfyingDeal = true;

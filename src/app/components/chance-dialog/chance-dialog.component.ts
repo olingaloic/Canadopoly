@@ -21,7 +21,6 @@ export class ChanceDialogComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close();
   }
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
 }

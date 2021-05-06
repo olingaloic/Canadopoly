@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Player } from 'src/app/model/player';
-import { Property } from 'src/app/model/square';
 import { DealService } from 'src/app/service/deal-service';
 import { BoardComponent } from '../board/board.component';
 

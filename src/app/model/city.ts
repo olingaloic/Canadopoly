@@ -19,4 +19,7 @@ export class City extends Property {
     getCurrentRentPrice(){
         return this.currentRentPrice;
     }
+    hasHouses() {
+        return this.nbHouses > 0;
+      }
 }

@@ -20,5 +20,4 @@ export class PropertyCardDialogComponent implements OnInit {
     this.property = this.data.property;
     if(this.property.isCity()) this.city = this.property as City;
   }
-
 }

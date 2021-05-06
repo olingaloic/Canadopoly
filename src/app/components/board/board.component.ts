@@ -1,7 +1,6 @@
-import { AfterViewInit, ViewChild, Renderer2, NgModule, Input} from '@angular/core';
+import { AfterViewInit, ViewChild, Renderer2} from '@angular/core';
 import { ElementRef } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { City } from 'src/app/model/city';
 import { Player } from 'src/app/model/player';
 
 @Component({
@@ -114,13 +113,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(){
-    console.log(this.square1)
     this.squares = [this.square0, this.square1, this.square2, this.square3, this.square4, this.square5,
     this.square6, this.square7, this.square8, this.square9, this.square10, this.square11, this.square12, this.square13,
     this.square14, this.square15, this.square16, this.square17, this.square18, this.square19, this.square20,
     this.square21, this.square22, this.square23, this.square24, this.square25, this.square26, this.square27];
-
-
   }
  
   renderMovePawn(player: Player){
@@ -130,10 +126,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
       pawn = this.humanPawn.nativeElement;
     } else {
       pawn = this.CPUPawn.nativeElement;
-
     }
-    //pawn.remove();
-    console.log(player)
+
     if (position == 0)
       this.renderer.appendChild(this.squares[0].nativeElement, pawn);
     if (position >= 1 && position <= 8 || position >= 14 && position <= 21)
@@ -142,25 +136,15 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.renderer.insertBefore(this.squares[position].nativeElement, pawn, this.squares[position].nativeElement.children[0]);
     if(position >= 22 && position <= 27)
       this.renderer.insertBefore(this.squares[position].nativeElement, pawn, this.squares[position].nativeElement.children[2]);
-      //this.renderer.appendChild(this.squares[position].nativeElement, pawn);
-
-
-
-    
   }
 
   renderBuyProperty(player : Player, position: number){
     var square = this.squares[position].nativeElement;
-    console.log(square.style);
     square.style.backgroundColor = player.colour;
   }
 
-  renderBuyHouse(city: City) {
-    //throw new Error('Method not implemented.');
-  }
-
   renderDiceValue(diceNumber: number){
-    var dice = this.dice.nativeElement;
+    let dice = this.dice.nativeElement;
     switch(diceNumber){
       case 1: 
         dice.src = "assets/img/one.png";
