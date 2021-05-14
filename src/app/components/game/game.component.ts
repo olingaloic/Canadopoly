@@ -84,9 +84,9 @@ export class GameComponent implements OnInit {
     this.properties.set(27, new City(27, "Vancouver", "Tier 1", 10000, 7000, [1000, 7500, 13000, 20000, 25000, 32000]));
   }
 
-  buyProperty(player: Player){
+  private buyProperty(player: Player){
     let property: Property = this.buyPropertyTransfer(player);
-    let eventString: string = player.name + " has bought " + property.name + ".";
+    let eventString: string = player.name + " has bought " + property.name + " for $" + property.propertyPrice;
     this.boardComponent.renderBuyProperty(player, player.position);
     if(property.isCity()){
       let chosenCity: City = property as City;
@@ -128,7 +128,7 @@ export class GameComponent implements OnInit {
     return this.player.isPlayerTurn && !this.canHumanEndTurn && this.player.balance >= 0;
   }
 
-  setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
+  private setHousesBuyable(citiesOfTheSameTier: Array<City>, player: Player){
     let areHousesBuyable: boolean = true;
     let isZeroHouseUnimprovedColour: boolean = true;
     citiesOfTheSameTier.forEach((city: City) => {
@@ -154,7 +154,7 @@ export class GameComponent implements OnInit {
     return city.player != player || city.isMortgaged;
   }
 
-  setPropertiesMorgageable(citiesOfTheSameTier: Array<City>){
+  private setPropertiesMorgageable(citiesOfTheSameTier: Array<City>){
     var hasNoneOfTheCitiesHouse: boolean = true;
     citiesOfTheSameTier.forEach((city: City) => {
       if(city.hasHouses()) hasNoneOfTheCitiesHouse = false;
@@ -221,7 +221,7 @@ export class GameComponent implements OnInit {
     this.updatePropertiesTableRendering();
   }
 
-  generateRandomNumber(minNumber: number, maxNumber: number){
+  private generateRandomNumber(minNumber: number, maxNumber: number){
     var randomNumber = Math.floor(Math.random()*maxNumber) + minNumber;
     return randomNumber;
   }
@@ -260,7 +260,7 @@ export class GameComponent implements OnInit {
     this.updateEventTableRendering(eventString);
   }
 
-  payRent(player: Player){
+  private payRent(player: Player){
     let property = this.properties.get(player.position);
     if(player.mustPayRent(property)){
       let eventString = player.name + " paid a $" + property.getCurrentRentPrice() + " rent to stay in " + property.name + ".";
@@ -281,7 +281,8 @@ export class GameComponent implements OnInit {
       this.CPUPlayerPlay();
     }
   }
-  CPUPlayerPlay() {
+
+  private CPUPlayerPlay() {
     if(this.CPUPlayer.canCPUPlayerGetFree()){
       this.playerGetFree(this.CPUPlayer);
     } else {
@@ -361,6 +362,8 @@ export class GameComponent implements OnInit {
         data: {humanPlayer: this.player, CPUPlayer : this.CPUPlayer, boardComponent: this.boardComponent}
       });
       let result = await dialogRef.afterClosed().toPromise();
+      this.player.setNbAirportsAfterDeal();
+      this.CPUPlayer.setNbAirportsAfterDeal();
       if(!result && this.CPUPlayer.balance < 0){
         this.isCPUPropositionDialogOpened = false; 
         this.nbBankruptcyHelpRefusals ++;
@@ -372,31 +375,38 @@ export class GameComponent implements OnInit {
     }
   }
 
-  getPropertiesCPUWants(chosenProperty: Property){
-    var propertiesCPUWants : Array<Property> = new Array();
+  private getPropertiesCPUWants(chosenProperty: Property){
+    let propertiesCPUWants : Array<Property> = new Array();
+    let nbNegotiationProperties: number = 0;
+    let maxNbNegotiationProperties: number = 3;
     if(chosenProperty.isCity()){
-      var humanPlayerCities = this.player.getDealableCities();
+      let humanPlayerCities = this.player.getDealableCities();
       let chosenCity = chosenProperty as City;
-      humanPlayerCities.forEach((city: City) => {
-        if(city.tier == chosenCity.tier)
+      for(let city of humanPlayerCities){
+        if(nbNegotiationProperties == maxNbNegotiationProperties) break;
+        if(city.tier == chosenCity.tier){
           propertiesCPUWants.push(city);
-      });
+          nbNegotiationProperties++;
+        }
+      }
     } else {
-      var humanPlayerAirports = this.player.getDealableAirports();
-      humanPlayerAirports.forEach((airport: Property) => {
-          propertiesCPUWants.push(airport);
-      });
+      let humanPlayerAirports = this.player.getDealableAirports();
+      for(let airport of humanPlayerAirports){
+        if(nbNegotiationProperties == maxNbNegotiationProperties) break;
+        propertiesCPUWants.push(airport);
+        nbNegotiationProperties++;
+      }
     }
     return propertiesCPUWants;
   }
-  getPropertiesValue(humanPlayerDealProperties: Array<Property>){
+  private getPropertiesValue(humanPlayerDealProperties: Array<Property>){
     var propertiesValue = 0;
     humanPlayerDealProperties.forEach((property: Property) => {
       propertiesValue += property.propertyPrice + this.cashOfferOffset;
     });
     return propertiesValue;
   }
-  async CPUPlayerProposeDeal(){
+  private async CPUPlayerProposeDeal(){
     var humanPlayerDealPropertiesValue = this.getPropertiesValue(this.player.negotiationProperties);
     this.CPUPlayer.negotiationProperties = this.CPUPlayer.getPropertiesEquivalentValue(this.player.negotiationProperties, humanPlayerDealPropertiesValue);
     this.CPUPlayer.cashOffer = humanPlayerDealPropertiesValue - this.getPropertiesValue(this.CPUPlayer.negotiationProperties) + this.cashOfferOffset;
@@ -413,11 +423,13 @@ export class GameComponent implements OnInit {
 
     await dialogRef.afterClosed().subscribe(result => {
       this.isCPUPropositionDialogOpened = false;
+      this.player.setNbAirportsAfterDeal();
+      this.CPUPlayer.setNbAirportsAfterDeal();
       this.setHousesBuyableAfterDeal();
       this.updatePropertiesTableRendering();
     });
   }
-  setHousesBuyableAfterDeal() {
+  private setHousesBuyableAfterDeal() {
     this.player.properties.forEach((property: Property) => {
       if(property.isCity()){
         let city = property as City;
@@ -435,8 +447,7 @@ export class GameComponent implements OnInit {
     });
   }
 
-
-  movePlayerToJail(player: Player){
+  private movePlayerToJail(player: Player){
     player.position = this.jailSquareNumber;
     player.nbTurnsInJail = this.maxNbTurnsInJail;
     this.updateEventTableRendering(player.name + " has been sent to jail.");
@@ -446,9 +457,7 @@ export class GameComponent implements OnInit {
     
   }
 
-
-
-  movePlayer(player: Player){
+  private movePlayer(player: Player){
     if(player.position != this.maxSquareNumber){
       player.position ++;
       this.boardComponent.renderMovePawn(player);
@@ -460,8 +469,7 @@ export class GameComponent implements OnInit {
     }
   }
 
-
-  generateRandomChanceEvent(player: Player) {
+  private generateRandomChanceEvent(player: Player) {
     let chanceEventNumber = this.generateRandomNumber(0, this.maxRandomChanceNumber);
     let chanceEventMessage;
     let eventString;
@@ -497,7 +505,7 @@ export class GameComponent implements OnInit {
 
   }
 
-  playerPayHousesRepairments(player: Player) {
+  private playerPayHousesRepairments(player: Player) {
     let numberPlayerHouses: number = player.getNumberOfHouses();
     let housesRepairmentsPrice = numberPlayerHouses * this.houseRepairmentsFee;
     let eventString = player.name + " paid $" + housesRepairmentsPrice + " for houses repairments.";
@@ -506,7 +514,7 @@ export class GameComponent implements OnInit {
   }
   
 
-  movePlayerToNextAirport(player: Player) {
+  private movePlayerToNextAirport(player: Player) {
     switch(player.position){
       case this.firstChanceSquareNumber:
         player.position = this.nextAirportFirstChanceSquare;
@@ -521,7 +529,7 @@ export class GameComponent implements OnInit {
     }  
   }
 
-  mortgageProperty(property: Property){
+  private mortgageProperty(property: Property){
     property.isMortgaged = true;
     property.isMortgageable = false;
     property.player.balance += property.propertyPrice/2;
@@ -542,7 +550,7 @@ export class GameComponent implements OnInit {
     this.updatePropertiesTableRendering();
   }
 
-  getCitiesOfTheSameTier(chosenCity: City){
+  private getCitiesOfTheSameTier(chosenCity: City){
     let citiesOfTheSameTier: Array<City> = new Array<City>();
       this.properties.forEach((property: Property, id: number) => {
           let city = property as City;
@@ -552,16 +560,16 @@ export class GameComponent implements OnInit {
       return citiesOfTheSameTier;
   }
 
-  updatePropertiesTableRendering(){
+  private updatePropertiesTableRendering(){
     this.dataSource.data = this.player.getPropertiesSorted();
   }
 
-  updateEventTableRendering(event: string){
+  private updateEventTableRendering(event: string){
     this.events.unshift(event);
     this.dataSourceEvents.data = this.events;
   }
 
-  openChanceDialog(player: Player, chanceEventMessage: string): void {
+  private openChanceDialog(player: Player, chanceEventMessage: string): void {
     const dialogRef = this.dialog.open(ChanceDialogComponent, {
       width: '150px',
       height: '210px',
@@ -570,7 +578,7 @@ export class GameComponent implements OnInit {
   }
 
   openPropertyCardDialog(property: Property){
-    const dialogRef = this.dialog.open(PropertyCardDialogComponent, {
+    this.dialog.open(PropertyCardDialogComponent, {
       width: '300px',
       height: '350px',
       data: {property: property}
@@ -585,8 +593,10 @@ export class GameComponent implements OnInit {
       data: {humanPlayer: this.player, CPUPlayer: player, boardComponent: this.boardComponent}
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.updatePropertiesTableRendering();
       this.setHousesBuyableAfterDeal();
+      this.player.setNbAirportsAfterDeal();
+      this.CPUPlayer.setNbAirportsAfterDeal();
+      this.updatePropertiesTableRendering();
     });
   }
 
@@ -599,6 +609,5 @@ export class GameComponent implements OnInit {
 
   declareBankruptcy(player: Player){
     this.router.navigate(['gameOver', { playerName: player.name }]);
-  }
-  
+  }  
 }

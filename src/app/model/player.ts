@@ -17,20 +17,19 @@ export class Player {
     constructor(name, colour) {
         this.name = name;
         this.colour = colour;
-        this.balance = 500000;
+        this.balance = 20000;
         this.position = 0;
         this.nbAirports = 0;
         this.properties = new Array<Property>();
     }
 
     getNumberOfHouses(){
-        var nbHouses: number = 0;
+        let nbHouses: number = 0;
         this.properties.forEach((property: Property) => {
             if(property.isCity()){
                 let city = property as City;
                 nbHouses += city.nbHouses;
             }
-
         });
         return nbHouses;
     }
@@ -89,7 +88,7 @@ export class Player {
     }
 
     getDealableCities(){
-        return this.getDealableProperties().filter(property => property.isCity() );
+        return this.getDealableProperties().filter(property => property.isCity()).filter(city => city instanceof City) as Array<City>;
     }
     getDealableAirports(){
         return this.getDealableProperties().filter(property => !property.isCity());
@@ -183,5 +182,12 @@ export class Player {
     canCPUPlayerGetFree(){
         let getFreeJailFee = 1000;
         return this.nbTurnsInJail > 0 && this.balance >= getFreeJailFee;
+    }
+    setNbAirportsAfterDeal(){
+        let nbAirports: number = 0;
+        this.properties.forEach((property: Property) => {
+            if(!property.isCity()) nbAirports++;
+        });
+        this.nbAirports = nbAirports;
     }
 }

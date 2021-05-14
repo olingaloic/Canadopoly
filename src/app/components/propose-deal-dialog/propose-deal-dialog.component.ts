@@ -88,8 +88,8 @@ export class ProposeDealDialogComponent implements OnInit {
   }
 
   CPUDealFunction(){
-    var CPUOfferValue: number = 0;
-    var playerOfferValue: number = 0;
+    let CPUOfferValue: number = 0;
+    let playerOfferValue: number = 0;
     this.CPUPlayer.negotiationProperties.forEach((property: Property) => {
       if(property.isMortgaged){
         CPUOfferValue += (property.propertyPrice/2) * this.CPUPlayer.getNbPlayerPropertiesSameColour(property);
@@ -106,7 +106,11 @@ export class ProposeDealDialogComponent implements OnInit {
       }
     });
     playerOfferValue += this.humanPlayer.cashOffer;
-    if(playerOfferValue > CPUOfferValue){
+    this.makeDeal(playerOfferValue, CPUOfferValue);
+  }
+  
+  private makeDeal(playerOfferValue: number, CPUOfferValue: number) {
+    if (playerOfferValue > CPUOfferValue) {
       this.dealService.doTransfer(this.humanPlayer, this.CPUPlayer);
       this.proposeDealDialogRef.close();
       this.propertiesDialogRef.close();
@@ -114,5 +118,4 @@ export class ProposeDealDialogComponent implements OnInit {
       this.unsatisfyingDeal = true;
     }
   }
-
 }

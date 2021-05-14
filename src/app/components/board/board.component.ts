@@ -107,6 +107,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @ViewChild('square27')
   square27: ElementRef;
 
+  private readonly startSqaurePostion: number = 0;
+  private readonly jailSquarePostion: number = 8;
+  private readonly holidaysSquarePosition: number = 14;
+  private readonly goToJailSquarePosition: number = 22;
+  private readonly lastSquarePosition: number = 27;
+
   constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
@@ -120,22 +126,38 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
  
   renderMovePawn(player: Player){
-    var pawn;
-    var position = player.position;
-    if(player.name == "Human Player"){
+    let pawn;
+    let position: number = player.position;
+    if(player.isHuman){
       pawn = this.humanPawn.nativeElement;
     } else {
       pawn = this.CPUPawn.nativeElement;
     }
 
-    if (position == 0)
+    if (this.isPlayerOnStartSquare(position))
       this.renderer.appendChild(this.squares[0].nativeElement, pawn);
-    if (position >= 1 && position <= 8 || position >= 14 && position <= 21)
+    if (this.isPlayerMovingHorizontally(position))
       this.renderer.insertBefore(this.squares[position].nativeElement, pawn, this.squares[position].nativeElement.children[1]);
-    if(position >= 9 && position <= 13)
+    if(this.isPlayerMovingVerticallyLeft(position))
       this.renderer.insertBefore(this.squares[position].nativeElement, pawn, this.squares[position].nativeElement.children[0]);
-    if(position >= 22 && position <= 27)
+    if(this.isPlayerMovingVerticallyRight(position))
       this.renderer.insertBefore(this.squares[position].nativeElement, pawn, this.squares[position].nativeElement.children[2]);
+  }
+
+  private isPlayerMovingVerticallyRight(position: number) {
+    return position >= this.goToJailSquarePosition && position <= this.lastSquarePosition;
+  }
+
+  private isPlayerMovingVerticallyLeft(position: number) {
+    return position > this.jailSquarePostion && position < this.holidaysSquarePosition;
+  }
+
+  private isPlayerOnStartSquare(position: number) {
+    return position == this.startSqaurePostion;
+  }
+
+  private isPlayerMovingHorizontally(position: number) {
+    return position > this.startSqaurePostion && position <= this.jailSquarePostion || position >= this.holidaysSquarePosition && position < this.goToJailSquarePosition;
   }
 
   renderBuyProperty(player : Player, position: number){

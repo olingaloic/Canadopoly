@@ -12,6 +12,7 @@ export class Airport extends Property{
     }
 
     getCurrentRentPrice(){
+        if(this.isMortgaged) return 0;
         var nbAirports = this.player.nbAirports;
         return this.rentPrices[nbAirports];
     }

@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Player } from 'src/app/model/player';
-import { Property } from 'src/app/model/square';
 import { BoardComponent } from '../board/board.component';
 import { ProposeDealDialogComponent } from '../propose-deal-dialog/propose-deal-dialog.component';
 
