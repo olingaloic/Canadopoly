@@ -179,10 +179,12 @@ export class Player {
         this.balance -= property.getCurrentRentPrice();
         owner.balance += property.getCurrentRentPrice();
     }
+
     canCPUPlayerGetFree(){
         let getFreeJailFee = 1000;
         return this.nbTurnsInJail > 0 && this.balance >= getFreeJailFee;
     }
+    
     setNbAirportsAfterDeal(){
         let nbAirports: number = 0;
         this.properties.forEach((property: Property) => {

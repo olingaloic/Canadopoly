@@ -47,5 +47,4 @@ export class CpuDealDialogComponent implements OnInit {
     this.CPUPlayer.negotiationProperties = null;
     this.CPUDealDialogRef.close();
   }
-
 }
